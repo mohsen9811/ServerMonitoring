@@ -1,0 +1,34 @@
+{
+  "servers": [
+    {
+      "id": "demo-local",
+      "name": "Demo Local Server",
+      "host": "localhost",
+      "features": {
+        "winrm": false,
+        "sql": false,
+        "iis": false,
+        "credit": false
+      },
+      "winrm": {
+        "authType": "local",
+        "computerName": "",
+        "username": "",
+        "password": ""
+      },
+      "sql": {
+        "enabled": false,
+        "authType": "sql",
+        "server": "localhost",
+        "port": 1433,
+        "username": "",
+        "password": ""
+      },
+      "paths": {
+        "logs": [],
+        "backups": []
+      },
+      "monitoredServices": []
+    }
+  ]
+}

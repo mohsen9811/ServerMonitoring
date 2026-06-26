@@ -2,7 +2,7 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const router = express.Router();
-const { asyncRoute, sendError } = require('../utils/errors');
+const { asyncRoute } = require('../utils/errors');
 const { getServers, getServerById } = require('../utils/servers');
 const { withSqlPool, sql } = require('../utils/sqlClient');
 const { isSqlEnabled, isCreditEnabled } = require('../utils/features');
@@ -84,7 +84,7 @@ router.post('/checks', asyncRoute(async (req, res) => {
 
 router.get('/history', (req, res) => res.json(history.slice(0, 30)));
 
-router.post('/run/:id', async (req, res) => {
+router.post('/run/:id', asyncRoute(async (req, res) => {
   const start = Date.now();
   try {
     const checks = readChecks();
@@ -127,8 +127,8 @@ router.post('/run/:id', async (req, res) => {
   } catch (err) {
     const record = { id: Date.now(), checkId: req.params.id, title: req.params.id, status: 'failed', error: err.message, durationMs: Date.now() - start, time: new Date().toISOString() };
     history.unshift(record); history = history.slice(0, 30);
-    sendError(res, err, 500, 'run credit check');
+    throw err;
   }
-});
+}, 'run credit check'));
 
 module.exports = router;

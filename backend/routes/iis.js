@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { asyncRoute, sendError } = require('../utils/errors');
+const { asyncRoute } = require('../utils/errors');
 const { getServerById } = require('../utils/servers');
 const { executeOnServer } = require('../utils/executor');
 const { getCachedOrFresh, clearCache } = require('../utils/monitorCache');
@@ -72,7 +72,7 @@ router.get('/:serverId', asyncRoute(async (req, res) => {
   res.json({ ...item.data, updatedAt: item.updatedAt, stale: item.stale, fromCache: item.fromCache });
 }, 'get iis state'));
 
-router.post('/:serverId/action', async (req, res) => {
+router.post('/:serverId/action', asyncRoute(async (req, res) => {
   const server = requireServer(req, res);
   if (!server) return;
   if (!isIisEnabled(server)) return res.status(400).json({ error: 'IIS برای این سرور فعال نیست', code: 'IIS_DISABLED', hint: 'در تنظیمات سرور، گزینه IIS را فقط برای Web Server فعال کنید.' });
@@ -150,7 +150,7 @@ router.post('/:serverId/action', async (req, res) => {
     clearCache(`alerts:${server.id}`);
     clearCache('live:');
     res.json({ success: true, type: normalizedType, name, action: normalizedAction, result: result ? JSON.parse(result) : null });
-  } catch (err) { sendError(res, err, 500, 'iis action'); }
-});
+  } catch (err) { throw err; }
+}, 'iis action'));
 
 module.exports = router;

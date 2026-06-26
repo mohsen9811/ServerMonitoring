@@ -515,13 +515,16 @@ function showWinRMHelp(host) {
   modal.style.display = 'flex';
   modal.innerHTML = `
     <div class="modal-window" style="max-width:550px;">
-      <div class="modal-header"><span><i class="fa-solid fa-shield-haltered"></i> تنظیمات WinRM</span><span class="modal-close close-help">&times;</span></div>
+      <div class="modal-header"><span><i class="fa-solid fa-shield-halved"></i> تنظیمات WinRM</span><span class="modal-close close-help">&times;</span></div>
       <div class="modal-body">
         <p>اتصال به <strong>${escapeHtml(host)}</strong> با خطا مواجه شد. لطفاً مراحل زیر را انجام دهید:</p>
         <hr><p><strong>مرحله 1 (روی ماشین محلی - PowerShell Admin):</strong></p>
-        <pre style="background:#0a0c10; padding:10px; border-radius:12px; overflow-x:auto;">Set-Item WSMan:\\localhost\\Client\\TrustedHosts -Value "${escapeHtml(host)}" -Force</pre>
+        <pre style="background:#0a0c10; padding:10px; border-radius:12px; overflow-x:auto;">Set-Item WSMan:\localhost\Client\TrustedHosts -Value "${escapeHtml(host)}" -Force</pre>
         <p><strong>مرحله 2 (روی سرور مقصد - PowerShell Admin):</strong></p>
-        <pre style="background:#0a0c10; padding:10px; border-radius:12px;">winrm set winrm/config/client/auth @{Basic="true"}\nwinrm set winrm/config/service/auth @{Basic="true"}\nwinrm set winrm/config/service @{AllowUnencrypted="true"}\nRestart-Service WinRM</pre>
+        <pre style="background:#0a0c10; padding:10px; border-radius:12px;">winrm set winrm/config/client/auth @{Basic="true"}
+winrm set winrm/config/service/auth @{Basic="true"}
+winrm set winrm/config/service @{AllowUnencrypted="true"}
+Restart-Service WinRM</pre>
         <button id="close-help-btn" class="primary-btn" style="margin-top:15px;">متوجه شدم</button>
       </div>
     </div>
@@ -1520,7 +1523,8 @@ function toFiniteNumber(value, fallback = 0) {
 }
 
 function clampPercent(value) {
-  return Math.max(0, Math.min(100, toFiniteNumber(value, 0)));
+  const n = toFiniteNumber(value, 0);
+  return Math.max(0, Math.min(100, n));
 }
 
 function formatUptime(data) {
@@ -1861,20 +1865,35 @@ document.getElementById('delete-server-btn')?.addEventListener('click', async ()
   } catch(e) { showToast(e.message,'error'); } finally { showLoading(false); }
 });
 
-function showToast(msg, type, duration = 3000) {
+function showToast(msg, type, duration = 3500) {
   const toast = document.getElementById('toast');
+  if (!toast) return;
   toast.innerText = msg;
   toast.className = `toast-message ${type}`;
   toast.classList.remove('hidden');
-  setTimeout(() => toast.classList.add('hidden'), duration);
+  toast.style.transform = 'translateY(0)';
+  toast.style.opacity = '1';
+  if (window.__toastTimeout) clearTimeout(window.__toastTimeout);
+  if (window.__toastAnimTimeout) clearTimeout(window.__toastAnimTimeout);
+  window.__toastAnimTimeout = setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateY(20px)';
+  }, duration - 300);
+  window.__toastTimeout = setTimeout(() => {
+    toast.classList.add('hidden');
+    toast.style.transform = '';
+    toast.style.opacity = '';
+  }, duration);
 }
 
 function escapeHtml(str) {
   if (str === null || str === undefined) return '';
-  return String(str).replace(/[&<>]/g, function(m) {
+  return String(str).replace(/[&<>"']/g, function(m) {
     if (m === '&') return '&amp;';
     if (m === '<') return '&lt;';
     if (m === '>') return '&gt;';
+    if (m === '"') return '&quot;';
+    if (m === "'") return '&#39;';
     return m;
   });
 }
