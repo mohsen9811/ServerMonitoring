@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Server Monitoring</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="horizon-dashboard">
+  <aside class="horizon-sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon"><i class="fa-solid fa-chart-line"></i></div>
+      <div>
+        <div class="brand-text">Server Monitoring</div>
+        <div class="brand-subtitle">Operations Panel</div>
+      </div>
+    </div>
+
+    <button id="add-server-btn" class="new-server-btn" type="button" onclick="openAddServerModal()">
+      <i class="fa-solid fa-plus"></i>
+      <span>افزودن سرور</span>
+    </button>
+
+    <button id="toggle-server-sort-btn" class="sort-server-btn" type="button" onclick="toggleServerSortMode()" title="فعال/غیرفعال کردن مرتب‌سازی سرورها">
+      <i class="fa-solid fa-arrow-up-wide-short"></i>
+      <span>مرتب سازی سرورها</span>
+    </button>
+
+    <div class="sidebar-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input id="server-search" type="search" placeholder="جستجوی سرور یا IP">
+    </div>
+
+    <div class="sidebar-section-title">سرورها</div>
+    <nav id="server-list" class="server-menu"></nav>
+  </aside>
+
+  <main class="horizon-main">
+    <header class="horizon-header">
+      <div class="server-title">
+        <div class="server-avatar"><i class="fa-solid fa-server"></i></div>
+        <div class="server-title-text">
+          <span class="eyebrow">سرور فعال</span>
+          <h1 id="current-server-name">انتخاب سرور</h1>
+          <span id="current-server-host-line" class="server-host-line">Host: --</span>
+        </div>
+        <span id="current-server-sql-badge" class="server-feature-badge enabled"><i class="fa-solid fa-database"></i> SQL فعال</span>
+        <span id="current-server-iis-badge" class="server-feature-badge disabled"><i class="fa-solid fa-globe"></i> بدون IIS</span>
+        <span id="current-server-credit-badge" class="server-feature-badge disabled"><i class="fa-solid fa-credit-card"></i> بدون سامانه</span>
+      </div>
+      <div class="header-actions">
+        <button class="icon-btn" title="رفرش وضعیت" onclick="refreshDashboardOverview()"><i class="fa-solid fa-rotate"></i></button>
+        <button class="alert-pill" title="هشدارها" onclick="openTab('alerts')">
+          <i class="fa-solid fa-bell"></i>
+          <span>هشدار</span>
+          <strong id="header-alert-count">0</strong>
+        </button>
+      </div>
+    </header>
+
+    <nav class="tab-bar" aria-label="بخش‌های مانیتورینگ">
+      <button class="tab-btn active" data-tab="dashboard"><i class="fa-solid fa-gauge-high"></i><span>داشبورد</span></button>
+      <button class="tab-btn" data-tab="system"><i class="fa-solid fa-chart-simple"></i><span>سیستم</span></button>
+      <button class="tab-btn" data-tab="disk"><i class="fa-solid fa-hard-drive"></i><span>دیسک</span></button>
+      <button class="tab-btn" data-tab="services"><i class="fa-solid fa-gears"></i><span>سرویس‌ها</span></button>
+      <button class="tab-btn iis-tab" data-tab="iis"><i class="fa-solid fa-globe"></i><span>IIS</span></button>
+      <button class="tab-btn sql-tab" data-tab="jobs"><i class="fa-solid fa-clock"></i><span>Jobs</span></button>
+      <button class="tab-btn sql-tab" data-tab="databases"><i class="fa-solid fa-database"></i><span>Database / HA</span></button>
+      <button class="tab-btn sql-tab" data-tab="connectivity"><i class="fa-solid fa-network-wired"></i><span>Linked</span></button>
+      <button class="tab-btn credit-tab" data-tab="credit"><i class="fa-solid fa-credit-card"></i><span>سامانه اعتباری</span></button>
+      <button class="tab-btn" data-tab="files"><i class="fa-solid fa-folder-open"></i><span>فایل‌ها</span></button>
+      <button class="tab-btn" data-tab="alerts"><i class="fa-solid fa-bell"></i><span>هشدارها</span></button>
+      <button class="tab-btn" data-tab="settings"><i class="fa-solid fa-sliders-h"></i><span>تنظیمات</span></button>
+    </nav>
+
+    <div class="tab-content-container">
+      <div id="tab-dashboard" class="tab-pane active">
+        <section class="dashboard-board">
+          <div class="dashboard-board-head">
+            <div>
+              <span class="eyebrow">Live Overview</span>
+              <h2 id="dashboard-server-title">نمای سلامت عملیاتی</h2>
+              <p id="dashboard-server-subtitle">خلاصه وضعیت همین سرور؛ برای عملیات، از تب تخصصی همان بخش استفاده کن.</p>
+            </div>
+            <button class="primary-btn" onclick="refreshDashboardOverview()"><i class="fa-solid fa-rotate"></i> به‌روزرسانی</button>
+          </div>
+
+          <div class="health-grid" id="dashboard-health-cards">
+            <article class="ops-status-card health-card">
+              <span class="ops-icon"><i class="fa-solid fa-chart-simple"></i></span>
+              <small>سیستم</small>
+              <strong id="dash-system-state">در انتظار بررسی</strong>
+              <em id="dash-system-sub">CPU / RAM / Uptime</em>
+            </article>
+            <article class="ops-status-card health-card">
+              <span class="ops-icon"><i class="fa-solid fa-hard-drive"></i></span>
+              <small>دیسک</small>
+              <strong id="dash-disk-state">در انتظار بررسی</strong>
+              <em id="dash-disk-sub">Drive Health</em>
+            </article>
+            <article class="ops-status-card health-card">
+              <span class="ops-icon"><i class="fa-solid fa-gears"></i></span>
+              <small>سرویس‌ها</small>
+              <strong id="dash-services-state">در انتظار بررسی</strong>
+              <em id="dash-services-sub">Monitored Services</em>
+            </article>
+            <article class="ops-status-card health-card iis-only">
+              <span class="ops-icon"><i class="fa-solid fa-globe"></i></span>
+              <small>IIS</small>
+              <strong>Web Server</strong>
+              <em>Sites / App Pools</em>
+            </article>
+            <article class="ops-status-card health-card sql-only">
+              <span class="ops-icon"><i class="fa-solid fa-database"></i></span>
+              <small>SQL / HA</small>
+              <strong id="dash-sql-state">در انتظار بررسی</strong>
+              <em id="dash-sql-sub">Database Health</em>
+            </article>
+          </div>
+
+          <div class="dashboard-main-grid">
+            <section class="dashboard-panel alerts-panel">
+              <div class="panel-title">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <span>هشدارهای فعال</span>
+                <button id="open-alerts-stat" class="link-btn" type="button">مشاهده لاگ</button>
+              </div>
+              <div id="dashboard-alert-preview" class="dashboard-alert-preview">در حال بررسی...</div>
+            </section>
+
+            <section class="dashboard-panel inventory-panel">
+              <div class="panel-title"><i class="fa-solid fa-server"></i><span>مشخصات مانیتورینگ</span></div>
+              <div class="inventory-list">
+                <div><span>Host</span><strong id="stat-current-host">--</strong></div>
+                <div><span>سرورها</span><strong id="stat-servers">0</strong></div>
+                <div><span>سرویس‌ها</span><strong id="stat-services">0</strong></div>
+                <div class="sql-only"><span>دیتابیس‌ها</span><strong id="stat-databases">0</strong></div>
+                <div><span>هشدارها</span><strong id="stat-alerts">0</strong></div>
+              </div>
+            </section>
+          </div>
+
+          <div id="dashboard-sql-note" class="feature-disabled-card compact" style="display:none;">
+            <i class="fa-solid fa-circle-info"></i>
+            <div><strong>SQL برای این سرور غیرفعال است.</strong><p>تب‌ها و هشدارهای SQL، Jobs، Database و Linked برای این سرور نمایش داده نمی‌شوند.</p></div>
+          </div>
+        </section>
+      </div>
+
+      <div id="tab-system" class="tab-pane">
+        <div class="pane-header"><h2><i class="fa-solid fa-chart-simple"></i> سیستم</h2><div><button id="refresh-system-btn" class="action-btn"><i class="fa-solid fa-rotate"></i></button><label class="auto-refresh-label"><input type="checkbox" id="auto-refresh-system"> خودکار ۵ ثانیه</label></div></div>
+        <div class="system-metrics">
+          <div class="metric-panel"><div class="metric-icon"><i class="fa-solid fa-microchip"></i></div><div class="metric-info"><h4>CPU</h4><div class="metric-value" id="cpu-value">0%</div><div class="progress-bar"><div class="progress-fill" id="cpu-bar" style="width:0%"></div></div></div></div>
+          <div class="metric-panel"><div class="metric-icon"><i class="fa-solid fa-memory"></i></div><div class="metric-info"><h4>RAM</h4><div class="metric-value" id="ram-value">0%</div><div class="progress-bar"><div class="progress-fill" id="ram-bar" style="width:0%"></div></div><div class="ram-detail" id="ram-detail">0 GB / 0 GB</div></div></div>
+          <div class="metric-panel"><div class="metric-icon"><i class="fa-solid fa-clock"></i></div><div class="metric-info"><h4>Uptime</h4><div class="metric-value" id="uptime-value">--</div><div class="uptime-detail" id="boot-time">آخرین بوت: --</div></div></div>
+        </div>
+      </div>
+
+      <div id="tab-disk" class="tab-pane">
+        <div class="pane-header"><h2><i class="fa-solid fa-hard-drive"></i> دیسک</h2><button class="action-btn" onclick="loadDisk()"><i class="fa-solid fa-rotate"></i></button></div>
+        <div id="disk-cards" class="disk-grid"></div>
+      </div>
+
+      <div id="tab-services" class="tab-pane">
+        <div class="pane-header"><h2><i class="fa-solid fa-microchip"></i> سرویس‌ها</h2><div><button id="show-add-service-modal-btn" class="action-btn"><i class="fa-solid fa-plus"></i> افزودن</button><button class="action-btn" onclick="loadServices()"><i class="fa-solid fa-rotate"></i></button></div></div>
+        <div id="services-list" class="service-grid"></div>
+      </div>
+
+      <div id="tab-iis" class="tab-pane">
+        <div class="pane-header compact-pane-header">
+          <div>
+            <h2><i class="fa-solid fa-globe"></i> IIS / Application Pools</h2>
+            <p class="pane-subtitle">وضعیت Websiteها و Application Poolها؛ امکان Start / Stop / Restart / Recycle.</p>
+          </div>
+          <div class="pane-tools">
+            <span id="iis-count" class="ops-count">0 Item</span>
+            <button class="action-btn" onclick="loadIis(true)"><i class="fa-solid fa-rotate"></i> رفرش</button>
+          </div>
+        </div>
+        <div id="iis-summary" class="alerts-summary"></div>
+        <div class="dashboard-main-grid">
+          <section class="dashboard-panel">
+            <div class="panel-title"><i class="fa-solid fa-window-maximize"></i><span>Web Sites</span></div>
+            <div class="table-wrap"><table class="data-table compact-ops-table"><thead><tr><th>Site</th><th>State</th><th>Binding</th><th>Path</th><th>عملیات</th></tr></thead><tbody id="iis-sites-body"></tbody></table></div>
+          </section>
+          <section class="dashboard-panel">
+            <div class="panel-title"><i class="fa-solid fa-layer-group"></i><span>Application Pools</span></div>
+            <div class="table-wrap"><table class="data-table compact-ops-table"><thead><tr><th>App Pool</th><th>State</th><th>Runtime</th><th>Pipeline</th><th>عملیات</th></tr></thead><tbody id="iis-pools-body"></tbody></table></div>
+          </section>
+        </div>
+      </div>
+
+      <div id="tab-jobs" class="tab-pane">
+        <div class="pane-header compact-pane-header">
+          <div>
+            <h2><i class="fa-solid fa-list-check"></i> SQL Agent Jobs</h2>
+            <p class="pane-subtitle">لیست فشرده برای تعداد زیاد Job؛ جزئیات و History فقط از مدیریت باز می‌شود.</p>
+          </div>
+          <div class="pane-tools">
+            <span id="jobs-count" class="ops-count">0 Job</span>
+            <button class="action-btn" onclick="loadJobs()"><i class="fa-solid fa-rotate"></i> رفرش</button>
+          </div>
+        </div>
+        <div class="ops-toolbar">
+          <input id="job-search" class="neo-input ops-search" placeholder="جستجوی Job..." autocomplete="off">
+          <select id="job-status-filter" class="neo-select ops-filter">
+            <option value="all">همه وضعیت‌ها</option>
+            <option value="failed">Failed</option>
+            <option value="running">Running</option>
+            <option value="succeeded">Succeeded</option>
+            <option value="disabled">Disabled</option>
+          </select>
+        </div>
+        <div class="table-wrap ops-table-wrap jobs-table-wrap">
+          <table class="data-table compact-ops-table jobs-table">
+            <thead>
+              <tr>
+                <th>Job</th>
+                <th>وضعیت</th>
+                <th>آخرین اجرا</th>
+                <th>اجرای بعدی</th>
+                <th>مدت</th>
+                <th>Category</th>
+                <th>عملیات</th>
+              </tr>
+            </thead>
+            <tbody id="jobs-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="tab-databases" class="tab-pane">
+        <div class="pane-header"><h2><i class="fa-solid fa-database"></i> Database / HA</h2><div class="pane-tools"><button class="action-btn" onclick="loadDatabases()"><i class="fa-solid fa-rotate"></i></button></div></div>
+        <div class="table-wrap"><table class="data-table db-table"><thead><tr><th>نام</th><th>وضعیت</th><th>Recovery</th><th>حجم MB</th><th>HA / AG</th><th>Role</th><th>Sync</th><th>Queue</th><th>جزئیات</th></tr></thead><tbody id="databases-body"></tbody></table></div>
+      </div>
+
+      <div id="tab-connectivity" class="tab-pane">
+        <div class="pane-header compact-pane-header">
+          <div>
+            <h2><i class="fa-solid fa-network-wired"></i> Linked Servers</h2>
+            <p class="pane-subtitle">نمای جدولی و فشرده برای تست و بررسی Linked Serverها.</p>
+          </div>
+          <div class="pane-tools">
+            <span id="linked-count" class="ops-count">0 Linked</span>
+            <button class="action-btn" onclick="loadConnectivity()"><i class="fa-solid fa-rotate"></i> رفرش</button>
+            <button class="primary-btn small-primary" onclick="testAllLinkedServers()"><i class="fa-solid fa-vial"></i> تست همه</button>
+          </div>
+        </div>
+        <div class="ops-toolbar">
+          <input id="linked-search" class="neo-input ops-search" placeholder="جستجوی Linked Server..." autocomplete="off">
+          <select id="linked-status-filter" class="neo-select ops-filter">
+            <option value="all">همه وضعیت‌ها</option>
+            <option value="connected">Connected</option>
+            <option value="failed">Failed</option>
+            <option value="warning">Warning</option>
+            <option value="nottested">Not tested</option>
+          </select>
+        </div>
+        <div id="connectivity-list" class="conn-list ops-linked-list"></div>
+      </div>
+
+      <div id="tab-credit" class="tab-pane">
+        <div class="pane-header"><h2><i class="fa-solid fa-credit-card"></i> سامانه اعتباری</h2><div class="pane-tools"><button class="primary-btn small-primary" onclick="openCreditConfigModal()"><i class="fa-solid fa-plus"></i> تعریف عملیات</button><button class="action-btn" onclick="loadCreditChecks(true)"><i class="fa-solid fa-rotate"></i></button></div></div>
+        <div class="credit-console-grid">
+          <section class="credit-operations-panel"><div class="section-title-line"><span>عملیات‌های دستی</span><small id="credit-target-server">Target SQL: --</small></div><div id="credit-checks" class="credit-operation-list"><div class="loading">در حال بارگذاری...</div></div></section>
+          <section class="credit-run-panel"><div class="section-title-line"><span>نتیجه اجرا</span><small id="credit-result-time">--</small></div><div id="credit-result" class="credit-result-box"><div class="empty-state">یک عملیات را اجرا کن تا خروجی Stored Procedure اینجا نمایش داده شود.</div></div></section>
+        </div>
+        <section class="credit-history-panel"><div class="section-title-line"><span>تاریخچه اجرای دستی</span><small>آخرین ۳۰ اجرا</small></div><div class="table-wrap"><table class="data-table compact-table"><thead><tr><th>عملیات</th><th>وضعیت</th><th>سرور SQL</th><th>Database</th><th>SP</th><th>مدت</th><th>زمان</th></tr></thead><tbody id="credit-history-body"><tr><td colspan="7">تاریخچه‌ای ثبت نشده است.</td></tr></tbody></table></div></section>
+      </div>
+
+      <div id="tab-files" class="tab-pane">
+        <div class="pane-header"><h2><i class="fa-solid fa-folder-tree"></i> فایل‌ها</h2></div>
+        <div class="file-search-bar"><input type="text" id="file-path" placeholder="مسیر کامل پوشه؛ مثل C:\Logs"><button class="action-btn" onclick="loadFiles()"><i class="fa-solid fa-eye"></i> نمایش</button></div>
+        <div id="file-error-msg"></div>
+        <div class="table-wrap"><table class="data-table"><thead><tr><th>نام فایل</th><th>سایز MB</th><th>تاریخ تغییر</th></tr></thead><tbody id="files-body"></tbody></table></div>
+      </div>
+
+      <div id="tab-alerts" class="tab-pane">
+        <div class="pane-header"><h2><i class="fa-solid fa-bell"></i> هشدارها</h2><div class="pane-tools"><button class="action-btn" onclick="loadAlerts()"><i class="fa-solid fa-rotate"></i> به‌روزرسانی</button><button class="primary-btn small-primary" onclick="loadAlerts(true)"><i class="fa-solid fa-globe"></i> همه سرورها</button></div></div>
+        <div id="alerts-summary" class="alerts-summary"></div>
+        <div id="alerts-list" class="alerts-list"></div>
+      </div>
+
+      <div id="tab-settings" class="tab-pane">
+        <div class="pane-header"><h2><i class="fa-solid fa-sliders-h"></i> تنظیمات سرور</h2></div>
+        <div id="server-settings" class="settings-form"></div>
+        <button id="delete-server-btn" class="danger-btn"><i class="fa-solid fa-trash-can"></i> حذف سرور</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- مودال جستجوی سرویس -->
+<div id="service-modal" class="glass-modal">
+  <div class="modal-window">
+    <div class="modal-header"><span><i class="fa-solid fa-magnifying-glass"></i> جستجوی سرویس</span><span class="modal-close close">&times;</span></div>
+    <div class="modal-body">
+      <input type="text" id="service-search-input" class="neo-input" placeholder="نام سرویس...">
+      <div id="search-results" class="search-results"></div>
+    </div>
+  </div>
+</div>
+
+<!-- مودال افزودن سرور -->
+<div id="server-add-modal" class="glass-modal">
+  <div class="modal-window server-modal-window">
+    <div class="modal-header"><span><i class="fa-solid fa-plus-circle"></i> افزودن سرور جدید</span><span class="modal-close close-server-modal">&times;</span></div>
+    <div class="modal-body server-modal-body">
+      <div class="server-form-grid">
+        <section class="server-form-section basic-section">
+          <div class="section-title"><i class="fa-solid fa-fingerprint"></i> مشخصات پایه</div>
+          <div class="basic-fields">
+            <div class="input-group"><label>شناسه یکتا *</label><input type="text" id="new-server-id" class="neo-input" placeholder="مثال: vm1"></div>
+            <div class="input-group"><label>نام نمایشی *</label><input type="text" id="new-server-name" class="neo-input" placeholder="مثال: سرور مالی"></div>
+            <div class="input-group"><label>Host / IP *</label><input type="text" id="new-server-host" class="neo-input" placeholder="192.168.1.10"></div>
+          </div>
+        </section>
+
+        <section class="server-form-section">
+          <div class="section-title"><i class="fa-solid fa-terminal"></i> اتصال WinRM</div>
+          <div id="winrm-warning" class="warning-note" style="display:none;"><i class="fa-solid fa-triangle-exclamation"></i> برای اتصال به سرور راه دور، TrustedHosts را تنظیم کنید.</div>
+          <div class="input-group"><label>WinRM Auth</label><select id="new-winrm-auth" class="neo-select"><option value="local">Local (همان دستگاه)</option><option value="default">Default</option><option value="credential">Credential</option></select></div>
+          <div id="new-winrm-cred" class="cred-fields" style="display:none;">
+            <div class="credential-grid">
+              <div class="input-group"><label>Windows Computer Name</label><input type="text" id="new-winrm-computer" class="neo-input ltr-input" placeholder="مثال: Sepand-DB2"></div>
+              <div class="input-group"><label>Username</label><input type="text" id="new-winrm-user" class="neo-input ltr-input" autocomplete="username" placeholder="مثال: .\sepand یا Sepand-DB2\sepand"></div>
+              <div class="input-group"><label>Password</label><input type="password" id="new-winrm-pass" class="neo-input ltr-input" autocomplete="current-password"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="server-form-section">
+          <div class="section-title"><i class="fa-solid fa-globe"></i> IIS / Web Server</div>
+          <label class="switch-row"><input type="checkbox" id="new-has-iis"><span>این سرور IIS / Web Server دارد</span></label>
+          <p class="section-hint">فقط روی سروری فعال کن که واقعاً IIS دارد؛ در غیر این صورت تب و هشدارهای IIS حذف می‌شود.</p>
+        </section>
+
+
+        <section class="server-form-section">
+          <div class="section-title"><i class="fa-solid fa-credit-card"></i> سامانه اعتباری</div>
+          <label class="switch-row"><input type="checkbox" id="new-has-credit"><span>این سرور میزبان سامانه اعتباری / SPهای اعتباری است</span></label>
+          <p class="section-hint">فقط برای SQL Serverای فعال کن که SPهای مانده فعال، معدل و کنترل‌های اعتباری روی آن اجرا می‌شود.</p>
+        </section>
+
+        <section class="server-form-section" id="new-sql-section">
+          <div class="section-title"><i class="fa-solid fa-database"></i> اتصال SQL Server</div>
+          <label class="switch-row"><input type="checkbox" id="new-has-sql" checked><span>این سرور SQL Server دارد</span></label>
+          <div id="new-sql-fields">
+          <div class="input-group"><label>SQL Auth</label><select id="new-sql-auth" class="neo-select"><option value="windows">Windows</option><option value="sql">SQL Server</option></select></div>
+          <div id="new-sql-cred" class="cred-fields" style="display:none;">
+            <div class="credential-grid">
+              <div class="input-group"><label>SQL User</label><input type="text" id="new-sql-user" class="neo-input" autocomplete="username"></div>
+              <div class="input-group"><label>SQL Password</label><input type="password" id="new-sql-pass" class="neo-input" autocomplete="current-password"></div>
+            </div>
+          </div>
+          <div class="credential-grid">
+            <div class="input-group"><label>SQL Server</label><input type="text" id="new-sql-server" class="neo-input" placeholder="خالی بماند = Host"></div>
+            <div class="input-group"><label>SQL Port</label><input type="number" id="new-sql-port" value="1433" class="neo-input"></div>
+          </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="modal-actions">
+        <button id="test-new-server-connection" class="action-btn full-width"><i class="fa-solid fa-vial"></i> تست اتصال</button>
+        <button id="confirm-add-server" class="primary-btn full-width"><i class="fa-solid fa-save"></i> ذخیره سرور</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div id="credit-config-modal" class="glass-modal">
+  <div class="modal-window server-modal-window" style="max-width:760px;">
+    <div class="modal-header"><span><i class="fa-solid fa-credit-card"></i> تنظیم عملیات سامانه اعتباری</span><span class="modal-close" onclick="closeCreditConfigModal()">&times;</span></div>
+    <div class="modal-body server-modal-body">
+      <input type="hidden" id="credit-config-id">
+      <div class="credential-grid">
+        <div class="input-group"><label>عنوان عملیات</label><input id="credit-config-title" class="neo-input" placeholder="مثلاً گرفتن معدل حساب"></div>
+        <div class="input-group"><label>Database</label><input id="credit-config-database" class="neo-input ltr-input" placeholder="مثلاً master"></div>
+      </div>
+      <div class="input-group"><label>نام Stored Procedure</label><input id="credit-config-procedure" class="neo-input ltr-input" placeholder="dbo.ProcedureName"></div>
+      <div class="input-group"><label>توضیح</label><textarea id="credit-config-description" class="neo-input" rows="2"></textarea></div>
+      <label class="switch-row"><input type="checkbox" id="credit-config-test-mode" checked><span>حالت تستی؛ فعلاً SP سیستمی تستی اجرا شود</span></label>
+      <div class="input-group"><label>پارامترها؛ هر خط: name|label|type|required|default</label><textarea id="credit-config-params" class="neo-input ltr-input" rows="5" placeholder="customerNo|شماره مشتری|nvarchar|true|123"></textarea></div>
+      <button class="primary-btn full-width" onclick="saveCreditConfigFromModal()"><i class="fa-solid fa-save"></i> ذخیره عملیات</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast-message hidden"></div>
+<div id="global-loading" class="global-loader hidden"><div class="loader"></div><div>در حال انجام...</div></div>
+<script src="app.js"></script>
+</body>
+</html>

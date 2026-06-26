@@ -1,0 +1,219 @@
+{
+  "servers": [
+    {
+      "id": "ROG-Mohsen",
+      "name": "ROG-Mohsen",
+      "host": "localhost",
+      "features": {
+        "winrm": true,
+        "sql": true,
+        "iis": false,
+        "credit": false
+      },
+      "winrm": {
+        "authType": "local",
+        "computerName": "",
+        "username": "",
+        "password": ""
+      },
+      "iis": null,
+      "credit": null,
+      "sql": {
+        "enabled": true,
+        "authType": "sql",
+        "server": "localhost",
+        "port": 1433,
+        "username": "sa",
+        "password": "1"
+      },
+      "paths": {
+        "logs": [],
+        "backups": []
+      },
+      "monitoredServices": []
+    },
+    {
+      "id": "Sepand-DB1",
+      "name": "Sepand-DB1",
+      "host": "172.19.9.25",
+      "features": {
+        "winrm": true,
+        "sql": true,
+        "iis": false
+      },
+      "winrm": {
+        "authType": "credential",
+        "computerName": "Sepand-DB1",
+        "username": "sepand",
+        "password": "123q!@#Q"
+      },
+      "iis": null,
+      "sql": {
+        "enabled": true,
+        "authType": "sql",
+        "server": "172.19.9.25",
+        "port": 1433,
+        "username": "sa",
+        "password": "Aa@123456"
+      },
+      "paths": {
+        "logs": [],
+        "backups": []
+      },
+      "monitoredServices": [
+        "MSSQLSERVER",
+        "Audiosrv"
+      ],
+      "alertRules": {
+        "backup": {
+          "fullHours": 26,
+          "logHours": 0,
+          "includeSystem": false
+        }
+      }
+    },
+    {
+      "id": "local",
+      "name": "Sepand-Dashboard",
+      "host": "localhost",
+      "winrm": {
+        "authType": "local",
+        "computerName": "",
+        "username": "",
+        "password": ""
+      },
+      "sql": null,
+      "paths": {
+        "logs": [
+          "C:\\Windows\\Logs",
+          "C:\\Temp",
+          "D:\\Eslami\\D"
+        ],
+        "backups": []
+      },
+      "monitoredServices": [
+        "Wexflow",
+        "Audiosrv"
+      ],
+      "features": {
+        "winrm": true,
+        "sql": false,
+        "iis": true
+      },
+      "iis": {
+        "enabled": true
+      }
+    },
+    {
+      "id": "Sepand-DB2",
+      "name": "Sepand-DB2",
+      "host": "172.19.9.22",
+      "features": {
+        "winrm": true,
+        "sql": false,
+        "iis": false,
+        "credit": false
+      },
+      "winrm": {
+        "authType": "credential",
+        "computerName": "Sepand-DB2",
+        "username": "sepand",
+        "password": "123q!@#Q"
+      },
+      "iis": null,
+      "credit": null,
+      "sql": null,
+      "paths": {
+        "logs": [],
+        "backups": []
+      },
+      "monitoredServices": []
+    },
+    {
+      "id": "Sepand-DWH1",
+      "name": "Sepand-DWH1",
+      "host": "172.19.9.26",
+      "features": {
+        "winrm": true,
+        "sql": true,
+        "iis": false,
+        "credit": false
+      },
+      "winrm": {
+        "authType": "credential",
+        "computerName": "Sepand-DWH1",
+        "username": "sepand",
+        "password": "123q!@#Q"
+      },
+      "iis": null,
+      "credit": null,
+      "sql": {
+        "enabled": true,
+        "authType": "sql",
+        "server": "172.19.9.26",
+        "port": 1433,
+        "username": "sa",
+        "password": "Aa123456"
+      },
+      "paths": {
+        "logs": [],
+        "backups": []
+      },
+      "monitoredServices": []
+    },
+    {
+      "id": "Sepand-DWH2",
+      "name": "Sepand-DWH2",
+      "host": "172.19.9.23",
+      "features": {
+        "winrm": true,
+        "sql": false,
+        "iis": false,
+        "credit": false
+      },
+      "winrm": {
+        "authType": "credential",
+        "computerName": "Sepand-DWH2",
+        "username": "sepand",
+        "password": "123q!@#Q"
+      },
+      "iis": null,
+      "credit": null,
+      "sql": null,
+      "paths": {
+        "logs": [],
+        "backups": []
+      },
+      "monitoredServices": []
+    },
+    {
+      "id": "Sepnad-Qlik",
+      "name": "Sepnad-Qlik",
+      "host": "172.19.9.21",
+      "features": {
+        "winrm": true,
+        "sql": false,
+        "iis": true,
+        "credit": false
+      },
+      "winrm": {
+        "authType": "credential",
+        "computerName": "Sepnad-Qlik",
+        "username": "sepand",
+        "password": "123q!@#Q"
+      },
+      "iis": {
+        "enabled": true
+      },
+      "credit": null,
+      "sql": null,
+      "paths": {
+        "logs": [],
+        "backups": []
+      },
+      "monitoredServices": [
+        "QlikviewServer"
+      ]
+    }
+  ]
+}

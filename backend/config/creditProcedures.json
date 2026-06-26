@@ -1,0 +1,33 @@
+{
+  "procedures": [
+    {
+      "id": "customer-average-balance",
+      "name": "میانگین حساب مشتری",
+      "description": "تست SPBalanceReportAvg برای محاسبه میانگین حساب مشتری",
+      "serverId": "Sepand-DB1",
+      "database": "master",
+      "timeoutSeconds": 60,
+      "parameters": [
+        { "name": "BranchCode", "label": "کد شعبه", "type": "string", "defaultValue": "1018" },
+        { "name": "DepositTypeNo", "label": "نوع سپرده", "type": "string", "defaultValue": "887" },
+        { "name": "CustomerNumber", "label": "شماره مشتری", "type": "string", "defaultValue": "10" },
+        { "name": "DepositSerialNo", "label": "سریال سپرده", "type": "string", "defaultValue": "1" },
+        { "name": "AvgFromDate", "label": "از تاریخ", "type": "string", "defaultValue": "14050301" },
+        { "name": "AvgToDate", "label": "تا تاریخ", "type": "string", "defaultValue": "14050310" }
+      ],
+      "script": "Declare @BranchCode VarChar(10) = {{BranchCode}}, @DepositTypeNo VarChar(10) = {{DepositTypeNo}}, @CustomerNumber VarChar(10) = {{CustomerNumber}}, @DepositSerialNo VarChar(10) = {{DepositSerialNo}}, @AvgFromDate VarChar(10) = {{AvgFromDate}}, @AvgToDate VarChar(10) = {{AvgToDate}}; Declare @Command VarChar(Max) = 'Exec SepandOperationDW.dbo.SPBalanceReportAvg ' + @BranchCode + ', ' + @DepositTypeNo + ', ' + @CustomerNumber + ', ' + @DepositSerialNo + ', ' + @AvgFromDate + ', ' + @AvgToDate + ', 0, 2'; Exec(@Command);"
+    },
+    {
+      "id": "customer-info-update",
+      "name": "اطلاعات مشتری",
+      "description": "تست Update_Customer_Info و هماهنگی شماره موبایل مشتری در سامانه اعتباری",
+      "serverId": "Sepand-DB1",
+      "database": "master",
+      "timeoutSeconds": 60,
+      "parameters": [
+        { "name": "CustomerNumber", "label": "شماره مشتری", "type": "string", "defaultValue": "10" }
+      ],
+      "script": "Declare @CustomerNumber varchar(20) = {{CustomerNumber}}; exec [SepandDW2].[dbo].[Update_Customer_Info] @cfcifno = @CustomerNumber; Declare @Mob varchar(20) = ''; Select @Mob = isnull(CFIMOBIL ,'') from SepandDW2.dbo.CfcInfo (nolock) where cfcifno = @CustomerNumber; Declare @str3 nvarchar(max) = ''; Set @str3 = 'update [BehinehDBCreditSarmayeh].crd.TblCustomers set CellPhoneNumber = ''''' + @Mob + ''''' where ''''' + @Mob + ''''' <> cast(CellPhoneNumber as varchar) and CustomerNumber = ''''' + @CustomerNumber + ''''''; exec (@str3) at [SepandCredit]; Select @CustomerNumber AS CustomerNumber, @Mob AS Mobile, 'Executed' AS Result;"
+    }
+  ]
+}

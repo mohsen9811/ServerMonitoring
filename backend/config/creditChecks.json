@@ -1,0 +1,22 @@
+[
+  {
+    "id": "active-balance",
+    "title": "گرفتن مانده فعال",
+    "description": "تست دستی مانده فعال",
+    "database": "master",
+    "procedure": "sys.sp_executesql",
+    "testMode": true,
+    "enabled": true,
+    "parameters": []
+  },
+  {
+    "id": "account-average",
+    "title": "گرفتن معدل",
+    "description": "تست دستی معدل حساب",
+    "database": "master",
+    "procedure": "sys.sp_executesql",
+    "testMode": true,
+    "enabled": true,
+    "parameters": []
+  }
+]
