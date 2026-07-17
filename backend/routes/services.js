@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { executeOnServer } = require('../utils/executor');
-const { getMonitoredServices, getAllServicesFromSql, getServiceFromSql } = require('../utils/monitoringCollectors');
-const { isSqlEnabled } = require('../utils/features');
+const { getMonitoredServices } = require('../utils/monitoringCollectors');
 const { getCachedOrFresh, clearCache } = require('../utils/monitorCache');
 const { getServers, getRawServers, saveServers } = require('../utils/servers');
 const { asyncRoute, sendError } = require('../utils/errors');
@@ -19,11 +18,8 @@ router.get('/all/:serverId', asyncRoute(async (req, res) => {
   const found = findServer(req.params.serverId);
   if (!found) return res.status(404).json({ error: 'Server not found' });
   const { server } = found;
-  const script = `Get-Service | Select-Object Name, DisplayName, Status | ConvertTo-Json -Depth 3`;
+  const script = `Get-Service | Select-Object Name, DisplayName, Status, StartType | ConvertTo-Json -Depth 3`;
   const item = await getCachedOrFresh(`services:all:${server.id}`, Number(process.env.MONITOR_CACHE_SERVICES_ALL_MS || 10000), async () => {
-    if (isSqlEnabled(server)) {
-      return await getAllServicesFromSql(server);
-    }
     const result = await executeOnServer(server, script);
     const data = result ? JSON.parse(result) : [];
     return Array.isArray(data) ? data : [data];
@@ -60,18 +56,11 @@ router.post('/:serverId/monitor', asyncRoute(async (req, res) => {
   const server = resolvedFound.server;
 
   if (!selectedFromList) {
-    if (isSqlEnabled(server)) {
-      const svc = await getServiceFromSql(server, serviceName);
-      if (!svc || svc.Status === 'NotFound') {
-        return res.status(400).json({ error: `Service "${serviceName}" does not exist on SQL server host` });
-      }
-    } else {
-      const script = `Get-Service -Name '${serviceName.replace(/'/g, "''")}' -ErrorAction Stop | Select-Object Name`;
-      try {
-        await executeOnServer(server, script);
-      } catch (err) {
-        return res.status(400).json({ error: `Service "${serviceName}" does not exist or unreachable: ${err.message}`, hint: err.hint });
-      }
+    const script = `Get-Service -Name '${serviceName.replace(/'/g, "''")}' -ErrorAction Stop | Select-Object Name`;
+    try {
+      await executeOnServer(server, script);
+    } catch (err) {
+      return res.status(400).json({ error: `Service "${serviceName}" does not exist or unreachable: ${err.message}`, hint: err.hint });
     }
   }
 

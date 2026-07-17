@@ -4,6 +4,7 @@ const { asyncRoute } = require('../utils/errors');
 const { getServerById } = require('../utils/servers');
 const { isSqlEnabled, sqlDisabledResponse } = require('../utils/features');
 const { getDatabases, getDatabaseDetails } = require('../utils/monitoringCollectors');
+const { getCachedOrFresh } = require('../utils/monitorCache');
 
 function requireServer(req, res) {
   const server = getServerById(req.params.serverId);
@@ -27,8 +28,8 @@ router.get('/:serverId', asyncRoute(async (req, res) => {
   const server = requireServer(req, res);
   if (!server) return;
   if (!isSqlEnabled(server)) return res.json([]);
-  const dbs = await getDatabases(server);
-  res.json(dbs);
+  const item = await getCachedOrFresh(`databases:${server.id}`, Number(process.env.MONITOR_CACHE_DATABASES_MS || 15000), () => getDatabases(server), { force: req.query.force === '1' });
+  res.json(item.data || []);
 }, 'get databases and HA state'));
 
 module.exports = router;

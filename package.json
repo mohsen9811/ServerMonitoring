@@ -5,12 +5,18 @@
   "main": "backend/server.js",
   "scripts": {
     "start": "node backend/server.js",
-    "dev": "nodemon backend/server.js"
+    "dev": "nodemon backend/server.js",
+    "dev:ui": "npm --prefix frontend-new run dev",
+    "build": "npm --prefix frontend-new run build",
+    "check": "node --check backend/server.js && node --check backend/routes/overview.js && npm --prefix frontend-new run build"
   },
   "dependencies": {
-    "express": "4.18.2",
+    "compression": "^1.8.1",
     "cors": "2.8.5",
-    "mssql": "10.0.4"
+    "express": "^4.22.2",
+    "express-rate-limit": "^8.6.0",
+    "helmet": "^8.3.0",
+    "mssql": "^12.7.0"
   },
   "devDependencies": {
     "nodemon": "3.0.2"

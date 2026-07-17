@@ -48,12 +48,14 @@ async function getMonitoredServices(server) {
           Name = $svc.Name
           DisplayName = $svc.DisplayName
           Status = $svc.Status.ToString()
+          StartType = $svc.StartType.ToString()
         }
       } else {
         $out += [PSCustomObject]@{
           Name = $n
           DisplayName = 'Service not found'
           Status = 'NotFound'
+          StartType = 'Unknown'
         }
       }
     }
@@ -117,20 +119,33 @@ async function getDisks(server) {
 async function getSystemMetrics(server) {
   const script = `
     $ErrorActionPreference = 'Stop'
-    $cpu = 0
+    $cpu = 0; $diskBusy = 0; $queueLength = 0; $networkRx = 0; $networkTx = 0
     try {
-      $cpuSample = (Get-Counter '\\Processor(_Total)\\% Processor Time' -SampleInterval 1 -MaxSamples 1 -ErrorAction Stop).CounterSamples | Select-Object -First 1
-      if ($cpuSample -and $null -ne $cpuSample.CookedValue) { $cpu = [math]::Round([double]$cpuSample.CookedValue, 1) }
+      $counterPaths = @(
+        '\\Processor(_Total)\\% Processor Time',
+        '\\PhysicalDisk(_Total)\\% Disk Time',
+        '\\System\\Processor Queue Length',
+        '\\Network Interface(*)\\Bytes Received/sec',
+        '\\Network Interface(*)\\Bytes Sent/sec'
+      )
+      $samples = (Get-Counter -Counter $counterPaths -SampleInterval 1 -MaxSamples 1 -ErrorAction Stop).CounterSamples
+      $cpu = [double](($samples | Where-Object Path -Like '*processor(_total)*% processor time' | Select-Object -First 1).CookedValue)
+      $diskBusy = [double](($samples | Where-Object Path -Like '*physicaldisk(_total)*% disk time' | Select-Object -First 1).CookedValue)
+      $queueLength = [double](($samples | Where-Object Path -Like '*system*processor queue length' | Select-Object -First 1).CookedValue)
+      $networkRx = [double](($samples | Where-Object Path -Like '*network interface*bytes received/sec' | Measure-Object CookedValue -Sum).Sum)
+      $networkTx = [double](($samples | Where-Object Path -Like '*network interface*bytes sent/sec' | Measure-Object CookedValue -Sum).Sum)
     } catch {
       try { $cpu = [double]((Get-Counter '\\Processor Information(_Total)\\% Processor Utility' -SampleInterval 1 -MaxSamples 1 -ErrorAction Stop).CounterSamples | Select-Object -First 1).CookedValue } catch { $cpu = 0 }
     }
 
-    $totalRAM = 0; $freeRAM = 0; $bootTime = $null; $source = 'CIM'
+    $totalRAM = 0; $freeRAM = 0; $bootTime = $null; $source = 'CIM'; $osCaption = ''; $osVersion = ''; $computerName = $env:COMPUTERNAME; $logicalCores = [Environment]::ProcessorCount
     try {
       $os = Get-CimInstance Win32_OperatingSystem -ErrorAction Stop
       $totalRAM = [math]::Round($os.TotalVisibleMemorySize / 1MB, 2)
       $freeRAM = [math]::Round($os.FreePhysicalMemory / 1MB, 2)
       $bootTime = $os.LastBootUpTime
+      $osCaption = $os.Caption
+      $osVersion = $os.Version
     } catch {
       $source = 'Fallback'
       try { $freeRAM = [math]::Round(((Get-Counter '\\Memory\\Available MBytes' -ErrorAction Stop).CounterSamples | Select-Object -First 1).CookedValue / 1024, 2) } catch { $freeRAM = 0 }
@@ -142,22 +157,46 @@ async function getSystemMetrics(server) {
     $ramPercent = if ($totalRAM -gt 0) { [math]::Round(($usedRAM / $totalRAM) * 100, 1) } else { 0 }
     if (-not $bootTime) { $bootTime = (Get-Date) }
     $uptime = (Get-Date) - $bootTime
+    $processes = @(Get-Process -ErrorAction SilentlyContinue)
+    $topProcesses = @($processes | Sort-Object CPU -Descending | Select-Object -First 6 | ForEach-Object {
+      [PSCustomObject]@{
+        name = $_.ProcessName
+        id = $_.Id
+        cpuSeconds = [math]::Round([double]$_.CPU, 1)
+        memoryMB = [math]::Round([double]$_.WorkingSet64 / 1MB, 1)
+        handles = $_.Handles
+      }
+    })
+    $pendingReboot = (Test-Path 'HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Component Based Servicing\\RebootPending') -or (Test-Path 'HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WindowsUpdate\\Auto Update\\RebootRequired')
 
     [PSCustomObject]@{
       cpuPercent = [math]::Round($cpu, 1)
+      logicalCores = [int]$logicalCores
+      processorQueueLength = [math]::Round($queueLength, 1)
+      diskBusyPercent = [math]::Min(100, [math]::Round($diskBusy, 1))
+      networkRxMbps = [math]::Round(($networkRx * 8) / 1MB, 2)
+      networkTxMbps = [math]::Round(($networkTx * 8) / 1MB, 2)
       totalRAM_GB = $totalRAM
       usedRAM_GB = [math]::Round($usedRAM, 2)
       freeRAM_GB = [math]::Round($freeRAM, 2)
+      ramTotalGB = $totalRAM
+      ramUsedGB = [math]::Round($usedRAM, 2)
       ramPercent = $ramPercent
       uptimeDays = [int][math]::Floor($uptime.TotalDays)
       uptimeHours = [int]$uptime.Hours
       uptimeMinutes = [int]$uptime.Minutes
-      uptimeSeconds = [int]$uptime.Seconds
+      uptimeSeconds = [int][math]::Floor($uptime.TotalSeconds)
       uptimeTotalMinutes = [int][math]::Floor($uptime.TotalMinutes)
       uptime = ('{0}d {1}h {2}m' -f [int][math]::Floor($uptime.TotalDays), [int]$uptime.Hours, [int]$uptime.Minutes)
       bootTime = $bootTime.ToString('yyyy-MM-dd HH:mm:ss')
+      computerName = $computerName
+      osCaption = $osCaption
+      osVersion = $osVersion
+      processCount = $processes.Count
+      topProcesses = $topProcesses
+      pendingReboot = [bool]$pendingReboot
       source = $source
-    } | ConvertTo-Json -Compress
+    } | ConvertTo-Json -Depth 5 -Compress
   `;
   const result = await executeOnServer(server, script);
   return safeJsonParse(result, {});

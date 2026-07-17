@@ -1,0 +1,1114 @@
+{
+  "nodes": [
+    {
+      "id": "readme_serverpulse_monitor",
+      "label": "ServerPulse Monitor",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "title and overview",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_multi_server_monitoring",
+      "label": "Multi-server Monitoring",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": "Features > Server Monitoring",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_winrm_remote_management",
+      "label": "WinRM Remote Management",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": "Features > Server Monitoring; Tech Stack",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_sql_server_monitoring",
+      "label": "SQL Server Monitoring",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": "Features > SQL Server Monitoring",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_iis_monitoring",
+      "label": "IIS Monitoring",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": "Features > IIS Monitoring",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_windows_service_monitoring",
+      "label": "Windows Service Monitoring",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": "Features > Windows Services",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_disk_file_monitoring",
+      "label": "Disk and File Monitoring",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": "Features > Disk & File Monitoring",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_alerting_system",
+      "label": "Alerting System",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": "Features > Alerting System",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_live_dashboard",
+      "label": "Live Monitoring Dashboard",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": "Features > Dashboard & UI",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_server_sent_events",
+      "label": "Server-Sent Events",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": "Tech Stack; API Endpoints > Monitoring",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_server_configuration",
+      "label": "Per-server Configuration",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": "Configuration > Server Configuration",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_express_api",
+      "label": "Express Monitoring API",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": "Tech Stack; API Endpoints",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_custom_credit_checks",
+      "label": "Custom Credit Stored Procedure Checks",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": "Features > SQL Server Monitoring; API Endpoints > Monitoring",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_persian_rtl_support",
+      "label": "Persian RTL Support",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": "Features > Dashboard & UI",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_least_privilege_monitoring",
+      "label": "Least-privilege Monitoring",
+      "file_type": "rationale",
+      "source_file": "README.md",
+      "source_location": "SQL Server Permissions; Security Considerations",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_feature_extension_workflow",
+      "label": "Monitoring Feature Extension Workflow",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": "Development > Adding New Monitoring Features",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "frontend_new_index_application_shell",
+      "label": "Server Pulse Application Shell",
+      "file_type": "code",
+      "source_file": "frontend-new/index.html",
+      "source_location": "lines 1-17",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "frontend_new_index_root_mount",
+      "label": "Root Application Mount",
+      "file_type": "code",
+      "source_file": "frontend-new/index.html",
+      "source_location": "line 14",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "frontend_new_index_main_tsx",
+      "label": "src/main.tsx Entry Module",
+      "file_type": "code",
+      "source_file": "frontend-new/index.html",
+      "source_location": "line 15",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "frontend_new_index_font_stack",
+      "label": "Vazirmatn and JetBrains Mono Font Stack",
+      "file_type": "concept",
+      "source_file": "frontend-new/index.html",
+      "source_location": "lines 9-11",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "frontend_new_index_rtl_document",
+      "label": "RTL Persian Document",
+      "file_type": "concept",
+      "source_file": "frontend-new/index.html",
+      "source_location": "line 2",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "frontend_index_dashboard_shell",
+      "label": "Operations Dashboard Shell",
+      "file_type": "code",
+      "source_file": "frontend/index.html",
+      "source_location": "lines 10-292",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "frontend_index_server_selector_sidebar",
+      "label": "Server Selector Sidebar",
+      "file_type": "code",
+      "source_file": "frontend/index.html",
+      "source_location": "lines 11-37",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "frontend_index_feature_badges",
+      "label": "Active Server Feature Badges",
+      "file_type": "code",
+      "source_file": "frontend/index.html",
+      "source_location": "lines 39-50",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "frontend_index_tabbed_monitoring_workspace",
+      "label": "Tabbed Monitoring Workspace",
+      "file_type": "code",
+      "source_file": "frontend/index.html",
+      "source_location": "lines 62-289",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "frontend_index_health_overview",
+      "label": "Operational Health Overview",
+      "file_type": "code",
+      "source_file": "frontend/index.html",
+      "source_location": "lines 78-149",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "frontend_index_system_metrics",
+      "label": "CPU RAM and Uptime Metrics",
+      "file_type": "code",
+      "source_file": "frontend/index.html",
+      "source_location": "lines 151-158",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "frontend_index_disk_management",
+      "label": "Disk Monitoring Panel",
+      "file_type": "code",
+      "source_file": "frontend/index.html",
+      "source_location": "lines 160-163",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "frontend_index_service_management",
+      "label": "Windows Service Management Panel",
+      "file_type": "code",
+      "source_file": "frontend/index.html",
+      "source_location": "lines 165-168 and 295-303",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "frontend_index_iis_operations",
+      "label": "IIS Sites and Application Pool Operations",
+      "file_type": "code",
+      "source_file": "frontend/index.html",
+      "source_location": "lines 170-192",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "frontend_index_sql_agent_jobs",
+      "label": "SQL Agent Jobs Panel",
+      "file_type": "code",
+      "source_file": "frontend/index.html",
+      "source_location": "lines 194-231",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "frontend_index_database_ha",
+      "label": "Database and High Availability Panel",
+      "file_type": "code",
+      "source_file": "frontend/index.html",
+      "source_location": "lines 233-236",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "frontend_index_linked_server_connectivity",
+      "label": "Linked Server Connectivity Panel",
+      "file_type": "code",
+      "source_file": "frontend/index.html",
+      "source_location": "lines 238-261",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "frontend_index_credit_checks_console",
+      "label": "Credit Stored Procedure Console",
+      "file_type": "code",
+      "source_file": "frontend/index.html",
+      "source_location": "lines 263-270",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "frontend_index_file_monitoring",
+      "label": "File Monitoring Panel",
+      "file_type": "code",
+      "source_file": "frontend/index.html",
+      "source_location": "lines 272-277",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "frontend_index_alert_center",
+      "label": "Alert Center",
+      "file_type": "code",
+      "source_file": "frontend/index.html",
+      "source_location": "lines 279-283",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "frontend_index_server_settings",
+      "label": "Server Settings Panel",
+      "file_type": "code",
+      "source_file": "frontend/index.html",
+      "source_location": "lines 285-289",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "frontend_index_add_server_workflow",
+      "label": "Add Server Workflow",
+      "file_type": "code",
+      "source_file": "frontend/index.html",
+      "source_location": "lines 306-371",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "frontend_index_credit_operation_configuration",
+      "label": "Credit Operation Configuration",
+      "file_type": "code",
+      "source_file": "frontend/index.html",
+      "source_location": "lines 374-389",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "frontend_index_feature_gated_navigation",
+      "label": "Feature-gated Monitoring Navigation",
+      "file_type": "rationale",
+      "source_file": "frontend/index.html",
+      "source_location": "lines 47-50, 67-71, 106-145, 328-358",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "frontend_index_rtl_document",
+      "label": "RTL Persian Operations UI",
+      "file_type": "concept",
+      "source_file": "frontend/index.html",
+      "source_location": "line 2 and Persian UI text throughout",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "frontend_index_app_js",
+      "label": "frontend/app.js",
+      "file_type": "code",
+      "source_file": "frontend/index.html",
+      "source_location": "line 394",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "frontend_index_style_css",
+      "label": "frontend/style.css",
+      "file_type": "code",
+      "source_file": "frontend/index.html",
+      "source_location": "line 7",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "readme_serverpulse_monitor",
+      "target": "readme_multi_server_monitoring",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "Features > Server Monitoring",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_serverpulse_monitor",
+      "target": "readme_winrm_remote_management",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "overview and Features > Server Monitoring",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_serverpulse_monitor",
+      "target": "readme_sql_server_monitoring",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "Features > SQL Server Monitoring",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_serverpulse_monitor",
+      "target": "readme_iis_monitoring",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "Features > IIS Monitoring",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_serverpulse_monitor",
+      "target": "readme_windows_service_monitoring",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "Features > Windows Services",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_serverpulse_monitor",
+      "target": "readme_disk_file_monitoring",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "Features > Disk & File Monitoring",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_serverpulse_monitor",
+      "target": "readme_alerting_system",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "Features > Alerting System",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_serverpulse_monitor",
+      "target": "readme_live_dashboard",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "Features > Dashboard & UI",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_live_dashboard",
+      "target": "readme_server_sent_events",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "Tech Stack and /api/live endpoint",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_serverpulse_monitor",
+      "target": "readme_express_api",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "Tech Stack and API Endpoints",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_sql_server_monitoring",
+      "target": "readme_custom_credit_checks",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "Features > SQL Server Monitoring",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_server_configuration",
+      "target": "readme_multi_server_monitoring",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "Configuration > servers array and per-server fields",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_server_configuration",
+      "target": "readme_winrm_remote_management",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "Server Configuration > winrm",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_server_configuration",
+      "target": "readme_sql_server_monitoring",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "Server Configuration > sql",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_server_configuration",
+      "target": "readme_alerting_system",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "Server Configuration > alertRules",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_least_privilege_monitoring",
+      "target": "readme_sql_server_monitoring",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "SQL Server Permissions and Security Considerations",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_serverpulse_monitor",
+      "target": "readme_persian_rtl_support",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "Features > Dashboard & UI",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_feature_extension_workflow",
+      "target": "readme_express_api",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "Development > Adding New Monitoring Features steps 1-2",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_feature_extension_workflow",
+      "target": "readme_server_configuration",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "Development > Adding New Monitoring Features step 4",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_new_index_application_shell",
+      "target": "frontend_new_index_root_mount",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend-new/index.html",
+      "source_location": "line 14",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_new_index_application_shell",
+      "target": "frontend_new_index_main_tsx",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend-new/index.html",
+      "source_location": "line 15",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_new_index_application_shell",
+      "target": "frontend_new_index_font_stack",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend-new/index.html",
+      "source_location": "lines 9-11",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_new_index_application_shell",
+      "target": "frontend_new_index_rtl_document",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend-new/index.html",
+      "source_location": "line 2",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_index_dashboard_shell",
+      "target": "frontend_index_server_selector_sidebar",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/index.html",
+      "source_location": "lines 10-37",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_index_dashboard_shell",
+      "target": "frontend_index_feature_badges",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/index.html",
+      "source_location": "lines 39-50",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_index_dashboard_shell",
+      "target": "frontend_index_tabbed_monitoring_workspace",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/index.html",
+      "source_location": "lines 62-289",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_index_dashboard_shell",
+      "target": "frontend_index_rtl_document",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/index.html",
+      "source_location": "line 2",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_index_dashboard_shell",
+      "target": "frontend_index_app_js",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/index.html",
+      "source_location": "line 394",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_index_dashboard_shell",
+      "target": "frontend_index_style_css",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/index.html",
+      "source_location": "line 7",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_index_tabbed_monitoring_workspace",
+      "target": "frontend_index_health_overview",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/index.html",
+      "source_location": "lines 78-149",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_index_tabbed_monitoring_workspace",
+      "target": "frontend_index_system_metrics",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/index.html",
+      "source_location": "lines 151-158",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_index_tabbed_monitoring_workspace",
+      "target": "frontend_index_disk_management",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/index.html",
+      "source_location": "lines 160-163",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_index_tabbed_monitoring_workspace",
+      "target": "frontend_index_service_management",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/index.html",
+      "source_location": "lines 165-168",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_index_tabbed_monitoring_workspace",
+      "target": "frontend_index_iis_operations",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/index.html",
+      "source_location": "lines 170-192",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_index_tabbed_monitoring_workspace",
+      "target": "frontend_index_sql_agent_jobs",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/index.html",
+      "source_location": "lines 194-231",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_index_tabbed_monitoring_workspace",
+      "target": "frontend_index_database_ha",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/index.html",
+      "source_location": "lines 233-236",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_index_tabbed_monitoring_workspace",
+      "target": "frontend_index_linked_server_connectivity",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/index.html",
+      "source_location": "lines 238-261",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_index_tabbed_monitoring_workspace",
+      "target": "frontend_index_credit_checks_console",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/index.html",
+      "source_location": "lines 263-270",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_index_tabbed_monitoring_workspace",
+      "target": "frontend_index_file_monitoring",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/index.html",
+      "source_location": "lines 272-277",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_index_tabbed_monitoring_workspace",
+      "target": "frontend_index_alert_center",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/index.html",
+      "source_location": "lines 279-283",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_index_tabbed_monitoring_workspace",
+      "target": "frontend_index_server_settings",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/index.html",
+      "source_location": "lines 285-289",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_index_add_server_workflow",
+      "target": "frontend_index_feature_gated_navigation",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/index.html",
+      "source_location": "feature checkboxes at lines 328-358 and feature-specific classes at lines 47-71",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_index_feature_badges",
+      "target": "frontend_index_feature_gated_navigation",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "frontend/index.html",
+      "source_location": "feature badges and feature-specific tab classes",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_index_credit_checks_console",
+      "target": "frontend_index_credit_operation_configuration",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/index.html",
+      "source_location": "credit console and credit configuration modal",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_index_health_overview",
+      "target": "frontend_index_alert_center",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/index.html",
+      "source_location": "dashboard alert preview and View Log control at lines 120-128",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_index_health_overview",
+      "target": "frontend_index_system_metrics",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/index.html",
+      "source_location": "health card explicitly summarizes CPU / RAM / Uptime",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_index_dashboard_shell",
+      "target": "readme_live_dashboard",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/index.html",
+      "source_location": "dashboard shell and live overview",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_index_system_metrics",
+      "target": "readme_server_sent_events",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "README.md",
+      "source_location": "README documents /api/live SSE metrics while HTML exposes live system metrics",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_index_iis_operations",
+      "target": "readme_iis_monitoring",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/index.html",
+      "source_location": "IIS sites and application pools panel",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_index_sql_agent_jobs",
+      "target": "readme_sql_server_monitoring",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/index.html",
+      "source_location": "SQL Agent Jobs panel",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_index_database_ha",
+      "target": "readme_sql_server_monitoring",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/index.html",
+      "source_location": "Database / HA panel",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_index_linked_server_connectivity",
+      "target": "readme_sql_server_monitoring",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/index.html",
+      "source_location": "Linked Servers panel",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_index_credit_checks_console",
+      "target": "readme_custom_credit_checks",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/index.html",
+      "source_location": "credit stored procedure console",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_index_service_management",
+      "target": "readme_windows_service_monitoring",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/index.html",
+      "source_location": "service management panel and service search modal",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_index_disk_management",
+      "target": "readme_disk_file_monitoring",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/index.html",
+      "source_location": "disk panel",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_index_file_monitoring",
+      "target": "readme_disk_file_monitoring",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/index.html",
+      "source_location": "file monitoring panel",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_index_alert_center",
+      "target": "readme_alerting_system",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/index.html",
+      "source_location": "alert center and all-servers control",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_index_rtl_document",
+      "target": "readme_persian_rtl_support",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/index.html",
+      "source_location": "RTL document direction and Persian labels",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_new_index_rtl_document",
+      "target": "readme_persian_rtl_support",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend-new/index.html",
+      "source_location": "line 2",
+      "weight": 1.0
+    },
+    {
+      "source": "frontend_index_dashboard_shell",
+      "target": "frontend_new_index_application_shell",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "frontend-new/index.html",
+      "source_location": "both HTML documents bootstrap the Persian server monitoring frontend",
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "server_capability_gating",
+      "label": "Server Capability Gating",
+      "nodes": [
+        "frontend_index_add_server_workflow",
+        "frontend_index_feature_badges",
+        "frontend_index_feature_gated_navigation",
+        "frontend_index_iis_operations",
+        "frontend_index_sql_agent_jobs",
+        "frontend_index_credit_checks_console"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "frontend/index.html"
+    },
+    {
+      "id": "agentless_monitoring_stack",
+      "label": "Agentless Monitoring Stack",
+      "nodes": [
+        "readme_serverpulse_monitor",
+        "readme_winrm_remote_management",
+        "readme_express_api",
+        "readme_sql_server_monitoring",
+        "readme_live_dashboard"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md"
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

@@ -1,20 +1,61 @@
+require('./utils/env');
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
+const crypto = require('crypto');
+const helmet = require('helmet');
+const compression = require('compression');
+const { rateLimit } = require('express-rate-limit');
 const { executeOnServer } = require('./utils/executor');
 const { getServers, saveServers, getServerById, ensureConfigFile } = require('./utils/servers');
 const { sendError, normalizeError } = require('./utils/errors');
 const { withSqlPool } = require('./utils/sqlClient');
 const { normalizeServerForStorage, publicServerSummary, isSqlEnabled } = require('./utils/features');
+const { getRuntimeSnapshot, runtimeMetricsMiddleware } = require('./utils/runtimeMetrics');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 ensureConfigFile();
 
-app.use(cors());
+const allowedOrigins = String(process.env.CORS_ORIGINS || '').split(',').map(item => item.trim()).filter(Boolean);
+app.disable('x-powered-by');
+app.use(helmet({ contentSecurityPolicy: false, crossOriginResourcePolicy: { policy: 'same-site' } }));
+app.use(compression());
+app.use(cors({
+  origin(origin, callback) {
+    if (!origin || !allowedOrigins.length || allowedOrigins.includes(origin)) return callback(null, true);
+    return callback(new Error('Origin is not allowed by CORS policy'));
+  },
+  credentials: true
+}));
 app.use(express.json({ limit: '2mb' }));
-app.use(express.static(path.join(__dirname, '../frontend')));
+app.use((req, res, next) => {
+  req.id = req.get('x-request-id') || crypto.randomUUID();
+  res.setHeader('x-request-id', req.id);
+  next();
+});
+app.use(runtimeMetricsMiddleware);
+app.use('/api', rateLimit({
+  windowMs: 60 * 1000,
+  limit: Math.max(60, Number(process.env.API_RATE_LIMIT || 600)),
+  standardHeaders: 'draft-8',
+  legacyHeaders: false
+}));
+
+const modernFrontend = path.join(__dirname, '../frontend-new/dist');
+const legacyFrontend = path.join(__dirname, '../frontend');
+const frontendRoot = fs.existsSync(modernFrontend) ? modernFrontend : legacyFrontend;
+app.use(express.static(frontendRoot, { maxAge: process.env.NODE_ENV === 'production' ? '1h' : 0, etag: true }));
+
+app.get('/api/health', (req, res) => res.json(getRuntimeSnapshot(req.query.window)));
+
+function editableServer(server) {
+  const { password: _winrmPassword, ...winrm } = server.winrm || {};
+  const { password: _sqlPassword, ...sql } = server.sql || {};
+  return { ...server, winrm, sql: server.sql ? sql : null, secretsConfigured: { winrm: Boolean(_winrmPassword), sql: Boolean(_sqlPassword) } };
+}
 
 // API: get all servers
 app.get('/api/servers', (req, res) => {
@@ -25,7 +66,7 @@ app.get('/api/servers', (req, res) => {
 app.get('/api/servers/:id', (req, res) => {
   const server = getServerById(req.params.id);
   if (!server) return res.status(404).json({ error: 'Server not found', code: 'SERVER_NOT_FOUND', hint: 'شناسه سرور در تنظیمات وجود ندارد.' });
-  res.json(server);
+  res.json(editableServer(server));
 });
 
 app.post('/api/servers', (req, res) => {
@@ -54,7 +95,20 @@ app.put('/api/servers/:id', (req, res) => {
   const servers = getServers();
   const index = servers.findIndex(s => s.id === id);
   if (index === -1) return res.status(404).json({ error: 'Server not found', code: 'SERVER_NOT_FOUND', hint: 'شناسه سرور در تنظیمات وجود ندارد.' });
-  servers[index] = normalizeServerForStorage({ ...servers[index], ...updated });
+  const current = servers[index];
+  const merged = {
+    ...current,
+    ...updated,
+    features: { ...(current.features || {}), ...(updated.features || {}) },
+    winrm: { ...(current.winrm || {}), ...(updated.winrm || {}) },
+    sql: updated.sql === null ? null : { ...(current.sql || {}), ...(updated.sql || {}) },
+    iis: updated.iis === null ? null : { ...(current.iis || {}), ...(updated.iis || {}) },
+    credit: updated.credit === null ? null : { ...(current.credit || {}), ...(updated.credit || {}) },
+    paths: { ...(current.paths || {}), ...(updated.paths || {}) }
+  };
+  if (updated.winrm && !updated.winrm.password) merged.winrm.password = current.winrm?.password || '';
+  if (updated.sql && !updated.sql.password) merged.sql.password = current.sql?.password || '';
+  servers[index] = normalizeServerForStorage(merged);
   saveServers(servers);
   res.json({ success: true, server: publicServerSummary(servers[index]) });
 });
@@ -161,6 +215,7 @@ app.use('/api/disk', require('./routes/disk'));
 app.use('/api/files', require('./routes/files'));
 app.use('/api/connectivity', require('./routes/connectivity'));
 app.use('/api/system', require('./routes/system'));
+app.use('/api/overview', require('./routes/overview'));
 app.use('/api/iis', require('./routes/iis'));
 app.use('/api/live', require('./routes/live'));
 app.use('/api/alerts', require('./routes/alerts'));
@@ -168,6 +223,12 @@ app.use('/api/credit', require('./routes/credit'));
 
 app.use('/api/*', (req, res) => {
   res.status(404).json({ error: 'API endpoint not found', code: 'NOT_FOUND', hint: 'آدرس API اشتباه است یا هنوز پیاده‌سازی نشده.' });
+});
+
+app.get('*', (req, res, next) => {
+  const indexPath = path.join(frontendRoot, 'index.html');
+  if (!fs.existsSync(indexPath)) return next();
+  res.sendFile(indexPath);
 });
 
 app.use((err, req, res, next) => {

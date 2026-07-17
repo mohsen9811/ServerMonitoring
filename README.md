@@ -42,17 +42,22 @@ A comprehensive **Windows Server & SQL Server monitoring dashboard** built with 
 - **Responsive design** - Works on desktop and mobile
 - **Dark/Light theme** - User preference saved
 - **Persian (RTL) support** - Full RTL layout and translations
+- **Operational health score** - Combined resource, service, database, job, disk, and alert health
+- **Real metric history** - CPU, memory, disk activity, network throughput, and processor queue history
+- **Runtime observability** - Monitor API latency percentiles, error rate, uptime, and memory usage
+- **Process intelligence** - Top CPU and memory processes plus pending reboot detection
 
 ## 🛠 Tech Stack
 
 | Layer | Technology |
 |-------|------------|
-| **Backend** | Node.js, Express.js |
+| **Backend** | Node.js, Express.js, Helmet, compression, rate limiting |
 | **Database** | Microsoft SQL Server (mssql driver) |
 | **Remote Mgmt** | WinRM (Windows Remote Management) |
-| **Frontend** | Vanilla JavaScript (ES6+), CSS3, HTML5 |
-| **Real-time** | Server-Sent Events (SSE) |
-| **Dev Tools** | Nodemon, ESLint |
+| **Frontend** | React, TypeScript, Vite, Tailwind CSS, Framer Motion |
+| **Data & Charts** | TanStack Query, Zustand, Recharts |
+| **Real-time** | Server-Sent Events (SSE) + cached polling history |
+| **Dev Tools** | Nodemon, TypeScript, Vite |
 
 ## 📋 Prerequisites
 
@@ -206,6 +211,9 @@ Copy `servers.example.json` to `servers.json` and customize:
 | GET | `/api/files/:serverId` | Log/backup file status |
 | GET | `/api/connectivity/:serverId` | Connection tests |
 | GET | `/api/system/:serverId` | System info (CPU, RAM, OS) |
+| GET | `/api/system/:serverId/history` | Real resource metric history |
+| GET | `/api/overview/:serverId` | Aggregated operational health snapshot |
+| GET | `/api/health` | Monitoring service runtime health and latency |
 | GET | `/api/iis/:serverId` | IIS app pools & sites |
 | GET | `/api/live/:serverId` | SSE live metrics stream |
 | GET | `/api/alerts/:serverId` | Alert evaluation |
@@ -314,4 +322,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **⚠️ Disclaimer**: This tool is for authorized monitoring only. Ensure you have permission to monitor target servers. The authors are not responsible for misuse.#   S e r v e r M o n i t o r i n g  
  #   S e r v e r M o n i t o r i n g  
+ 
+#   S e r v e r M o n i t o r i n g  
  
