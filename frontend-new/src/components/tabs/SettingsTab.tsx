@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
-import { Database, Globe2, KeyRound, Plus, Save, Server, ShieldCheck, TestTube2, Trash2 } from "lucide-react";
+import { Database, Globe2, HelpCircle, KeyRound, Plus, Save, Server, ShieldCheck, TestTube2, Trash2 } from "lucide-react";
 import { Card, CardContent } from "../ui/Card";
 import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
@@ -8,6 +8,7 @@ import { useToast } from "../ui/Toast";
 import { useServerStore } from "../../stores/serverStore";
 import { useCreateServer, useDeleteServer, useServer, useTestConnection, useUpdateServer } from "../../hooks/useQueries";
 import type { Server as ServerType } from "../../types";
+import { ServerAccessGuide } from "../settings/ServerAccessGuide";
 
 interface SettingsTabProps { serverId: string | null }
 
@@ -37,6 +38,7 @@ export function SettingsTab({ serverId }: SettingsTabProps) {
   const { data: serverDetails } = useServer(serverId);
   const server = serverDetails || summaryServer;
   const [form, setForm] = useState(() => makeForm(server));
+  const [showGuide, setShowGuide] = useState(false);
   const { showToast } = useToast();
   const createMutation = useCreateServer();
   const updateMutation = useUpdateServer();
@@ -101,7 +103,9 @@ export function SettingsTab({ serverId }: SettingsTabProps) {
 
   const busy = createMutation.isPending || updateMutation.isPending;
   return <div className="mx-auto max-w-5xl space-y-4 pb-8">
-    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"><div><div className="mb-1 flex items-center gap-2 text-[10px] uppercase tracking-[.18em] text-cyan-500/70"><ShieldCheck className="h-3.5 w-3.5" /> connection profile</div><h2 className="text-xl font-black text-slate-100">{editing ? `تنظیمات ${server?.name}` : "اتصال سرور جدید"}</h2><p className="mt-1 text-xs text-slate-600">اطلاعات اتصال، قابلیت‌ها و دسترسی‌های موردنیاز پایش را تنظیم کنید.</p></div><div className="flex gap-2"><Button variant="outline" size="sm" onClick={test} disabled={testMutation.isPending}><TestTube2 className={`h-4 w-4 ${testMutation.isPending ? "animate-pulse" : ""}`} /> تست اتصال</Button><Button size="sm" onClick={save} disabled={busy}>{editing ? <Save className="h-4 w-4" /> : <Plus className="h-4 w-4" />}{editing ? "ذخیره" : "افزودن سرور"}</Button></div></div>
+    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"><div><div className="mb-1 flex items-center gap-2 text-[10px] uppercase tracking-[.18em] text-violet-400/70"><ShieldCheck className="h-3.5 w-3.5" /> connection profile</div><h2 className="text-xl font-black text-slate-100">{editing ? `تنظیمات ${server?.name}` : "اتصال سرور جدید"}</h2><p className="mt-1 text-xs text-slate-600">اطلاعات اتصال، قابلیت‌ها و دسترسی‌های موردنیاز پایش را تنظیم کنید.</p></div><div className="flex flex-wrap gap-2"><Button variant="outline" size="sm" onClick={() => setShowGuide(value => !value)}><HelpCircle className="h-4 w-4" /> {showGuide ? "بستن راهنما" : "راهنمای افزودن سرور"}</Button><Button variant="outline" size="sm" onClick={test} disabled={testMutation.isPending}><TestTube2 className={`h-4 w-4 ${testMutation.isPending ? "animate-pulse" : ""}`} /> تست اتصال</Button><Button size="sm" onClick={save} disabled={busy}>{editing ? <Save className="h-4 w-4" /> : <Plus className="h-4 w-4" />}{editing ? "ذخیره" : "افزودن سرور"}</Button></div></div>
+
+    {showGuide && <ServerAccessGuide />}
 
     <div className="grid gap-4 lg:grid-cols-2">
       <SettingsCard icon={Server} title="مشخصات پایه" description="هویت سرور در پنل و آدرس دسترسی شبکه">
@@ -124,7 +128,7 @@ export function SettingsTab({ serverId }: SettingsTabProps) {
   </div>;
 }
 
-function SettingsCard({ icon: Icon, title, description, children }: { icon: typeof Server; title: string; description: string; children: ReactNode }) { return <Card><CardContent><div className="mb-4 flex items-center gap-3"><div className="grid h-9 w-9 place-content-center rounded-xl border border-cyan-400/10 bg-cyan-400/5 text-cyan-300"><Icon className="h-4 w-4" /></div><div><h3 className="text-sm font-extrabold text-slate-200">{title}</h3><p className="mt-0.5 text-[10px] text-slate-600">{description}</p></div></div>{children}</CardContent></Card>; }
+function SettingsCard({ icon: Icon, title, description, children }: { icon: typeof Server; title: string; description: string; children: ReactNode }) { return <Card><CardContent><div className="mb-4 flex items-center gap-3"><div className="grid h-9 w-9 place-content-center rounded-xl border border-violet-400/15 bg-violet-400/[.07] text-violet-300"><Icon className="h-4 w-4" /></div><div><h3 className="text-sm font-extrabold text-slate-200">{title}</h3><p className="mt-0.5 text-[10px] text-slate-600">{description}</p></div></div>{children}</CardContent></Card>; }
 function Select({ label, value, onChange, options }: { label: string; value: string; onChange: (value: string) => void; options: [string,string][] }) { return <label className="space-y-1.5"><span className="block text-xs font-semibold text-slate-400">{label}</span><select value={value} onChange={event => onChange(event.target.value)} className="h-11 w-full rounded-2xl border border-border bg-card/70 px-4 text-xs text-textMain outline-none focus:border-primary/40">{options.map(([key, text]) => <option key={key} value={key}>{text}</option>)}</select></label>; }
-function Toggle({ checked, onChange, label }: { checked: boolean; onChange: (checked: boolean) => void; label: string }) { return <label className="flex cursor-pointer items-center justify-between rounded-2xl border border-white/5 bg-black/15 p-3"><span className="text-xs font-bold text-slate-300">{label}</span><input type="checkbox" checked={checked} onChange={event => onChange(event.target.checked)} className="h-4 w-4 accent-cyan-400" /></label>; }
-function FeatureToggle({ icon: Icon, label, description, checked, onChange }: { icon: typeof Globe2; label: string; description: string; checked: boolean; onChange: (checked: boolean) => void }) { return <label className={`flex cursor-pointer items-center gap-3 rounded-2xl border p-4 transition ${checked ? "border-cyan-400/15 bg-cyan-400/[.045]" : "border-white/5 bg-white/[.02]"}`}><div className="grid h-9 w-9 place-content-center rounded-xl bg-black/20 text-slate-500"><Icon className="h-4 w-4" /></div><div className="flex-1"><div className="text-xs font-bold text-slate-300">{label}</div><div className="mt-1 text-[10px] text-slate-600">{description}</div></div><input type="checkbox" checked={checked} onChange={event => onChange(event.target.checked)} className="h-4 w-4 accent-cyan-400" /></label>; }
+function Toggle({ checked, onChange, label }: { checked: boolean; onChange: (checked: boolean) => void; label: string }) { return <label className="flex cursor-pointer items-center justify-between rounded-2xl border border-white/5 bg-black/15 p-3"><span className="text-xs font-bold text-slate-300">{label}</span><input type="checkbox" checked={checked} onChange={event => onChange(event.target.checked)} className="h-4 w-4 accent-violet-500" /></label>; }
+function FeatureToggle({ icon: Icon, label, description, checked, onChange }: { icon: typeof Globe2; label: string; description: string; checked: boolean; onChange: (checked: boolean) => void }) { return <label className={`flex cursor-pointer items-center gap-3 rounded-2xl border p-4 transition ${checked ? "border-violet-400/20 bg-violet-400/[.055]" : "border-white/5 bg-white/[.02]"}`}><div className="grid h-9 w-9 place-content-center rounded-xl bg-black/20 text-slate-500"><Icon className="h-4 w-4" /></div><div className="flex-1"><div className="text-xs font-bold text-slate-300">{label}</div><div className="mt-1 text-[10px] text-slate-600">{description}</div></div><input type="checkbox" checked={checked} onChange={event => onChange(event.target.checked)} className="h-4 w-4 accent-violet-500" /></label>; }

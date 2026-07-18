@@ -120,8 +120,8 @@ export function DashboardLayout() {
       <main className="shell-panel flex h-full min-w-0 flex-1 flex-col overflow-hidden rounded-[22px]">
         <header className="flex h-[68px] shrink-0 items-center justify-between border-b border-white/5 px-3 md:px-5">
           <div className="flex min-w-0 items-center gap-3">
-            <button onClick={() => setSidebarCollapsed(!sidebarCollapsed)} className="grid h-9 w-9 place-content-center rounded-xl border border-white/5 bg-white/[.025] text-slate-500 transition hover:text-cyan-300 md:hidden"><Menu className="h-4 w-4" /></button>
-            <div className="relative grid h-10 w-10 shrink-0 place-content-center rounded-2xl border border-cyan-400/15 bg-cyan-400/[.06] text-cyan-300">
+            <button onClick={() => setSidebarCollapsed(!sidebarCollapsed)} className="grid h-9 w-9 place-content-center rounded-xl border border-white/5 bg-white/[.025] text-slate-500 transition hover:text-violet-300 md:hidden"><Menu className="h-4 w-4" /></button>
+            <div className="relative grid h-10 w-10 shrink-0 place-content-center rounded-2xl border border-violet-400/20 bg-violet-400/[.08] text-violet-300 shadow-[0_0_30px_rgba(124,58,237,.12)]">
               <Server className="h-5 w-5" />
               {currentServer && <span className="absolute -left-0.5 -top-0.5 h-2.5 w-2.5 rounded-full border-2 border-[#0c111d] bg-emerald-400 shadow-[0_0_10px_#34d399]" />}
             </div>
@@ -140,7 +140,7 @@ export function DashboardLayout() {
           {visibleTabs.map(tab => {
             const Icon = tab.icon;
             const active = activeTab === tab.id;
-            return <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`relative flex h-9 shrink-0 items-center gap-2 rounded-xl px-3 text-[11px] font-bold transition ${active ? "bg-cyan-400/[.09] text-cyan-200" : "text-slate-500 hover:bg-white/[.03] hover:text-slate-300"}`}><Icon className="h-3.5 w-3.5" /><span>{tab.label}</span>{active && <motion.span layoutId="active-tab" className="absolute inset-x-3 -bottom-[9px] h-px bg-cyan-300 shadow-[0_0_9px_#22d3ee]" />}</button>;
+            return <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`relative flex h-9 shrink-0 items-center gap-2 rounded-xl px-3 text-[11px] font-bold transition ${active ? "bg-violet-400/[.11] text-violet-200" : "text-slate-500 hover:bg-white/[.03] hover:text-slate-300"}`}><Icon className="h-3.5 w-3.5" /><span>{tab.label}</span>{active && <motion.span layoutId="active-tab" className="absolute inset-x-3 -bottom-[9px] h-px bg-violet-300 shadow-[0_0_10px_#8b5cf6]" />}</button>;
           })}
         </nav>
 
@@ -157,7 +157,7 @@ export function DashboardLayout() {
 }
 
 function NoServer({ onSettings }: { onSettings: () => void }) {
-  return <div className="grid min-h-[70vh] place-content-center text-center"><div className="mx-auto grid h-16 w-16 place-content-center rounded-3xl border border-cyan-400/10 bg-cyan-400/5 text-cyan-300"><Search className="h-7 w-7" /></div><h2 className="mt-5 text-lg font-black text-slate-200">اولین سرور را متصل کنید</h2><p className="mx-auto mt-2 max-w-sm text-xs leading-6 text-slate-500">برای شروع پایش، مشخصات WinRM و در صورت نیاز SQL Server را در بخش تنظیمات وارد کنید.</p><button onClick={onSettings} className="mx-auto mt-5 rounded-xl border border-cyan-400/20 bg-cyan-400/10 px-4 py-2 text-xs font-bold text-cyan-200">رفتن به تنظیمات</button></div>;
+  return <div className="grid min-h-[70vh] place-content-center text-center"><div className="mx-auto grid h-16 w-16 place-content-center rounded-3xl border border-violet-400/15 bg-violet-400/[.07] text-violet-300"><Search className="h-7 w-7" /></div><h2 className="mt-5 text-lg font-black text-slate-200">اولین سرور را متصل کنید</h2><p className="mx-auto mt-2 max-w-sm text-xs leading-6 text-slate-500">برای شروع پایش، مشخصات WinRM و در صورت نیاز SQL Server را در بخش تنظیمات وارد کنید.</p><button onClick={onSettings} className="mx-auto mt-5 rounded-xl border border-violet-400/25 bg-violet-400/10 px-4 py-2 text-xs font-bold text-violet-200">رفتن به تنظیمات</button></div>;
 }
 
 function TabLoader() { return <div className="space-y-3"><div className="h-16 animate-pulse rounded-2xl bg-white/[.025]" /><div className="h-72 animate-pulse rounded-3xl bg-white/[.025]" /></div>; }

@@ -109,13 +109,21 @@ export interface DiskInfo {
   UsedPercent: number;
   Status: 'Healthy' | 'Warning' | 'Critical';
   ProviderName?: string;
+  TotalBytes?: number;
+  UsedBytes?: number;
+  FreeBytes?: number;
+  FreePercent?: number;
+  Source?: 'CIM' | 'PSDriveFallback';
 }
 
 export interface ServiceInfo {
   Name: string;
   DisplayName: string;
-  Status: 'Running' | 'Stopped' | 'Paused' | 'NotFound';
+  Status: 'Running' | 'Stopped' | 'Paused' | 'StartPending' | 'StopPending' | 'ContinuePending' | 'PausePending' | 'NotFound';
   StartType?: string;
+  CanStop?: boolean;
+  CanPauseAndContinue?: boolean;
+  ServiceType?: string;
 }
 
 export interface IISWebsite {
@@ -143,6 +151,9 @@ export interface SQLJob {
   next_run_datetime: string;
   last_run_duration: string;
   is_running: boolean;
+  execution_state?: 'Running' | 'Idle' | 'Disabled';
+  running_since?: string;
+  description?: string;
   last_message?: string;
 }
 

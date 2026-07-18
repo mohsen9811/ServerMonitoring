@@ -45,16 +45,16 @@ export const runtimeApi = {
 };
 
 export const diskApi = {
-  get: (serverId: string) => api.get<DiskInfo[]>(`/disk/${serverId}`),
+  get: (serverId: string, force = false) => api.get<DiskInfo[]>(`/disk/${serverId}`, { params: force ? { force: 1 } : undefined }),
 };
 
 export const servicesApi = {
-  list: (serverId: string) => api.get<ServiceInfo[]>(`/services/${serverId}`),
-  listAll: (serverId: string) => api.get<ServiceInfo[]>(`/services/all/${serverId}`),
+  list: (serverId: string, force = false) => api.get<ServiceInfo[]>(`/services/${serverId}`, { params: force ? { force: 1 } : undefined }),
+  listAll: (serverId: string, force = false) => api.get<ServiceInfo[]>(`/services/all/${serverId}`, { params: force ? { force: 1 } : undefined }),
   action: (serverId: string, service: string, action: string, force = false) =>
     api.post(`/services/${serverId}/action`, { service, action, force }),
-  add: (serverId: string, serviceName: string) =>
-    api.post(`/services/${serverId}/monitor`, { serviceName }),
+  add: (serverId: string, serviceName: string, selectedFromList = false) =>
+    api.post(`/services/${serverId}/monitor`, { serviceName, selectedFromList }),
   remove: (serverId: string, serviceName: string) =>
     api.delete(`/services/${serverId}/monitor/${encodeURIComponent(serviceName)}`),
 };
@@ -66,7 +66,7 @@ export const iisApi = {
 };
 
 export const jobsApi = {
-  list: (serverId: string) => api.get<SQLJob[]>(`/jobs/${serverId}`),
+  list: (serverId: string, force = false) => api.get<SQLJob[]>(`/jobs/${serverId}`, { params: force ? { force: 1 } : undefined }),
   action: (serverId: string, jobName: string, action: string) =>
     api.post(`/jobs/${serverId}/action`, { jobName, action }),
   details: (serverId: string, jobName: string) =>

@@ -12,20 +12,21 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 interface IisTabProps { serverId: string | null }
 
 export function IisTab({ serverId }: IisTabProps) {
-  if (!serverId) return null;
   const { data: iis, isLoading, refetch } = useIIS(serverId);
   const { showToast } = useToast();
   const queryClient = useQueryClient();
 
   const actionMut = useMutation({
     mutationFn: ({ type, name, action }: { type: "site" | "pool"; name: string; action: string }) =>
-      iisApi.action(serverId, type, name, action).then((r) => r.data),
+      iisApi.action(serverId!, type, name, action).then((r) => r.data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["iis", serverId] });
       showToast("عملیات IIS با موفقیت انجام شد", "success");
     },
     onError: (err: any) => showToast(err.message, "error"),
   });
+
+  if (!serverId) return null;
 
   if (isLoading) {
     return (

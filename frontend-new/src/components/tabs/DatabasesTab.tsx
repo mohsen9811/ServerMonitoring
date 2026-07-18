@@ -9,8 +9,8 @@ import { formatNumber, getStatusVariant } from "../../lib/utils";
 interface DatabasesTabProps { serverId: string | null }
 
 export function DatabasesTab({ serverId }: DatabasesTabProps) {
-  if (!serverId) return null;
   const { data: databases, isLoading, refetch } = useDatabases(serverId);
+  if (!serverId) return null;
 
   if (isLoading) {
     return (

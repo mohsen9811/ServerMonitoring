@@ -57,7 +57,8 @@ export function useDiskInfo(serverId: string | null) {
     queryKey: ['disk', serverId],
     queryFn: () => diskApi.get(serverId!).then(res => res.data),
     enabled: !!serverId,
-    staleTime: 30000,
+    staleTime: 10000,
+    refetchInterval: 15000,
   });
 }
 
@@ -66,7 +67,8 @@ export function useServices(serverId: string | null) {
     queryKey: ['services', serverId],
     queryFn: () => servicesApi.list(serverId!).then(res => res.data),
     enabled: !!serverId,
-    staleTime: 30000,
+    staleTime: 3000,
+    refetchInterval: 5000,
   });
 }
 
@@ -93,7 +95,8 @@ export function useJobs(serverId: string | null) {
     queryKey: ['jobs', serverId],
     queryFn: () => jobsApi.list(serverId!).then(res => res.data),
     enabled: !!serverId,
-    staleTime: 30000,
+    staleTime: 3000,
+    refetchInterval: 5000,
   });
 }
 
@@ -215,7 +218,7 @@ export function useAddService() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ serverId, serviceName }: { serverId: string; serviceName: string }) =>
-      servicesApi.add(serverId, serviceName).then(res => res.data),
+      servicesApi.add(serverId, serviceName, true).then(res => res.data),
     onSuccess: (_, { serverId }) => queryClient.invalidateQueries({ queryKey: ['services', serverId] }),
   });
 }

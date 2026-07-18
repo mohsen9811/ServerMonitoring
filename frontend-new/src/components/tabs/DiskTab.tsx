@@ -9,8 +9,8 @@ import { formatNumber, formatPercent } from "../../lib/utils";
 interface DiskTabProps { serverId: string | null }
 
 export function DiskTab({ serverId }: DiskTabProps) {
+  const { data: disks, isLoading, isError, error, isFetching, refetch } = useDiskInfo(serverId);
   if (!serverId) return null;
-  const { data: disks, isLoading, refetch } = useDiskInfo(serverId);
 
   if (isLoading) {
     return (
@@ -25,6 +25,8 @@ export function DiskTab({ serverId }: DiskTabProps) {
     );
   }
 
+  if (isError) return <div className="grid min-h-[45vh] place-content-center text-center text-textMuted"><HardDrive className="mx-auto mb-3 h-10 w-10 text-rose-400/60" /><h3 className="text-sm font-bold text-rose-200">خواندن ظرفیت دیسک ناموفق بود</h3><p className="mx-auto mt-2 max-w-lg whitespace-pre-line text-xs leading-6 text-slate-500">{error instanceof Error ? error.message : "ارتباط با Windows Storage برقرار نشد."}</p><Button className="mx-auto mt-4" variant="outline" size="sm" onClick={() => refetch()}><RefreshCw className="h-4 w-4" /> تلاش دوباره</Button></div>;
+
   if (!disks || disks.length === 0) {
     return (
       <div className="text-center py-16 text-textMuted">
@@ -36,25 +38,36 @@ export function DiskTab({ serverId }: DiskTabProps) {
 
   const chartData = disks.map((d) => ({
     name: d.Drive.replace(":", ""),
-    used: Math.round(d.UsedPercent),
-    free: 100 - Math.round(d.UsedPercent),
-    total: d.TotalGB,
+    usedGB: Number(d.UsedGB || 0),
+    freeGB: Number(d.FreeGB || 0),
+    totalGB: Number(d.TotalGB || 0),
+    usedPercent: Number(d.UsedPercent || 0),
   }));
+
+  const totalCapacity = disks.reduce((sum, disk) => sum + Number(disk.TotalGB || 0), 0);
+  const totalFree = disks.reduce((sum, disk) => sum + Number(disk.FreeGB || 0), 0);
+  const totalUsed = Math.max(0, totalCapacity - totalFree);
 
   return (
     <div className="space-y-4 animate-fade-in">
       <div className="flex items-center justify-between">
-        <h2 className="font-black text-textMain text-lg">دیسک‌ها</h2>
-        <Button variant="secondary" size="sm" onClick={() => refetch()}>
-          <RefreshCw className="w-4 h-4" />
-          رفرش
+        <div><h2 className="font-black text-textMain text-lg">ظرفیت ذخیره‌سازی</h2><p className="mt-1 text-[11px] text-textMuted">اعداد بر پایه GiB واقعی سیستم‌عامل (۱ GiB = 1024³ byte)</p></div>
+        <Button variant="secondary" size="sm" onClick={() => refetch()} disabled={isFetching}>
+          <RefreshCw className={`w-4 h-4 ${isFetching ? "animate-spin" : ""}`} />
+          تازه‌سازی
         </Button>
+      </div>
+
+      <div className="grid grid-cols-3 gap-2">
+        <CapacityFact label="کل ظرفیت" value={totalCapacity} tone="text-violet-300" />
+        <CapacityFact label="مصرف‌شده" value={totalUsed} tone="text-slate-200" />
+        <CapacityFact label="فضای آزاد" value={totalFree} tone="text-emerald-300" />
       </div>
 
       {/* Chart */}
       <Card>
         <CardContent>
-          <h3 className="font-bold text-textMain mb-2">مصرف دیسک‌ها</h3>
+          <div className="mb-3 flex items-center justify-between"><h3 className="font-bold text-textMain">ظرفیت واقعی هر درایو</h3><div className="flex gap-3 text-[10px] text-slate-500"><span><i className="ml-1 inline-block h-2 w-2 rounded-sm bg-violet-500" />مصرف</span><span><i className="ml-1 inline-block h-2 w-2 rounded-sm bg-slate-800" />آزاد</span></div></div>
           <DiskBarChart data={chartData} />
         </CardContent>
       </Card>
@@ -79,7 +92,7 @@ export function DiskTab({ serverId }: DiskTabProps) {
                 </div>
               </div>
               <Badge variant={d.UsedPercent >= 90 ? "danger" : d.UsedPercent >= 80 ? "warning" : "success"}>
-                {formatPercent(d.UsedPercent)}
+                {formatPercent(Number(d.UsedPercent || 0))}
               </Badge>
             </div>
 
@@ -93,15 +106,17 @@ export function DiskTab({ serverId }: DiskTabProps) {
             </div>
 
             <div className="grid grid-cols-3 gap-2 text-xs text-textMuted">
-              <div><span className="font-medium text-textMain">{formatNumber(d.UsedGB, 1)}</span> GB مصرف</div>
-              <div><span className="font-medium text-textMain">{formatNumber(d.FreeGB, 1)}</span> GB خالی</div>
-              <div><span className="font-medium text-textMain">{formatNumber(d.TotalGB, 1)}</span> GB کل</div>
+              <div><span className="font-medium text-textMain">{formatNumber(Number(d.UsedGB || 0), 2)}</span> GiB مصرف</div>
+              <div><span className="font-medium text-emerald-300">{formatNumber(Number(d.FreeGB || 0), 2)}</span> GiB آزاد</div>
+              <div><span className="font-medium text-textMain">{formatNumber(Number(d.TotalGB || 0), 2)}</span> GiB کل</div>
             </div>
 
-            {d.ProviderName && <div className="mt-2 text-[10px] text-textMuted">Provider: {d.ProviderName}</div>}
+            <div className="mt-2 flex justify-between text-[10px] text-textMuted"><span>{d.ProviderName ? `Provider: ${d.ProviderName}` : d.Source === "PSDriveFallback" ? "منبع جایگزین PowerShell" : "منبع: Windows CIM"}</span><span>{formatPercent(Number(d.FreePercent ?? 100 - d.UsedPercent))} آزاد</span></div>
           </div>
         ))}
       </div>
     </div>
   );
 }
+
+function CapacityFact({ label, value, tone }: { label: string; value: number; tone: string }) { return <div className="rounded-2xl border border-white/5 bg-white/[.025] p-3"><div className={`font-mono text-lg font-black ${tone}`}>{formatNumber(value, 2)} <span className="text-[10px] text-slate-600">GiB</span></div><div className="mt-1 text-[10px] text-slate-500">{label}</div></div>; }

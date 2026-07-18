@@ -131,7 +131,7 @@ export function DashboardTab({ serverId }: DashboardTabProps) {
                   <div className="truncate font-bold text-slate-200">{process.name}</div>
                   <div className="mt-0.5 font-mono text-[10px] text-slate-600">PID {process.id} · {process.handles} handles</div>
                 </div>
-                <div className="text-left font-mono"><div className="text-cyan-300">{process.cpuSeconds}s CPU</div><div className="text-[10px] text-slate-500">{process.memoryMB} MB</div></div>
+                <div className="text-left font-mono"><div className="text-violet-300">{process.cpuSeconds}s CPU</div><div className="text-[10px] text-slate-500">{process.memoryMB} MB</div></div>
               </div>
             ))}
             {!system.topProcesses?.length && <div className="py-14 text-center text-xs text-slate-500">اطلاعات فرآیندها هنوز دریافت نشده است.</div>}
@@ -161,12 +161,12 @@ function HealthRing({ score, state }: { score: number; state: string }) {
 }
 
 function MetricCard({ icon: Icon, label, value, unit, detail, history, color, decimals = 1 }: { icon: typeof Cpu; label: string; value: number; unit: string; detail: string; history: number[]; color: "cyan" | "violet" | "amber" | "emerald"; decimals?: number }) {
-  const colors = { cyan: "#22d3ee", violet: "#a78bfa", amber: "#fbbf24", emerald: "#34d399" };
+  const colors = { cyan: "#8b5cf6", violet: "#c084fc", amber: "#fbbf24", emerald: "#34d399" };
   return <article className={`metric-card metric-${color}`}><div className="flex items-start justify-between"><div className="metric-icon"><Icon className="h-4 w-4" /></div><span className="text-[10px] uppercase tracking-[.18em] text-slate-600">{label}</span></div><div className="mt-4 flex items-end justify-between gap-2"><div><div className="font-mono text-2xl font-bold tracking-tight text-slate-100 md:text-3xl">{Number(value || 0).toFixed(decimals)}<span className="mr-1 text-xs font-medium text-slate-500">{unit}</span></div><p className="mt-1 text-[10px] text-slate-500">{detail}</p></div><div className="h-11 w-24 opacity-80"><Sparkline data={history.map(value => ({ value }))} color={colors[color]} height={44} /></div></div></article>;
 }
 
 function PanelHeader({ icon: Icon, title, eyebrow, trailing }: { icon: typeof Activity; title: string; eyebrow: string; trailing?: ReactNode }) {
-  return <header className="flex items-center justify-between border-b border-white/5 px-4 py-3.5"><div className="flex items-center gap-3"><div className="grid h-8 w-8 place-content-center rounded-xl border border-cyan-400/10 bg-cyan-400/5 text-cyan-300"><Icon className="h-4 w-4" /></div><div><h3 className="text-sm font-extrabold text-slate-200">{title}</h3><p className="mt-0.5 text-[10px] text-slate-600">{eyebrow}</p></div></div>{trailing}</header>;
+  return <header className="flex items-center justify-between border-b border-white/5 px-4 py-3.5"><div className="flex items-center gap-3"><div className="grid h-8 w-8 place-content-center rounded-xl border border-violet-400/15 bg-violet-400/[.07] text-violet-300"><Icon className="h-4 w-4" /></div><div><h3 className="text-sm font-extrabold text-slate-200">{title}</h3><p className="mt-0.5 text-[10px] text-slate-600">{eyebrow}</p></div></div>{trailing}</header>;
 }
 
 function SignalCard({ icon: Icon, label, value, suffix, issue }: { icon: typeof Wrench; label: string; value: number; suffix: string; issue: number }) {
@@ -183,9 +183,9 @@ function DiskCard({ disk }: { disk: { Drive: string; VolumeName?: string; UsedPe
   return <div className="rounded-2xl border border-white/5 bg-black/20 p-3.5"><div className="flex items-start justify-between"><div><div className="font-mono text-sm font-bold text-slate-200" dir="ltr">{disk.Drive}</div><div className="mt-0.5 max-w-32 truncate text-[10px] text-slate-600">{disk.VolumeName || "Local volume"}</div></div><span className={`disk-percent disk-${tone}`}>{disk.UsedPercent.toFixed(1)}%</span></div><div className="mt-4 h-1.5 overflow-hidden rounded-full bg-white/5"><motion.div initial={{ width: 0 }} animate={{ width: `${Math.min(100, disk.UsedPercent)}%` }} transition={{ duration: .8 }} className={`h-full rounded-full disk-bar-${tone}`} /></div><div className="mt-2 flex justify-between font-mono text-[9px] text-slate-600"><span>{disk.FreeGB} GB آزاد</span><span>{disk.TotalGB} GB</span></div></div>;
 }
 
-function HeroFact({ icon: Icon, label, value }: { icon: typeof TimerReset; label: string; value: string | number }) { return <div className="hero-fact"><Icon className="h-4 w-4 text-cyan-300" /><div><div className="text-[9px] text-slate-600">{label}</div><div className="mt-0.5 font-bold text-slate-200">{value}</div></div></div>; }
+function HeroFact({ icon: Icon, label, value }: { icon: typeof TimerReset; label: string; value: string | number }) { return <div className="hero-fact"><Icon className="h-4 w-4 text-violet-300" /><div><div className="text-[9px] text-slate-600">{label}</div><div className="mt-0.5 font-bold text-slate-200">{value}</div></div></div>; }
 function HealthyEmpty() { return <div className="grid min-h-56 place-content-center text-center"><div className="mx-auto grid h-12 w-12 place-content-center rounded-2xl bg-emerald-400/10 text-emerald-300"><CheckCircle2 className="h-6 w-6" /></div><strong className="mt-3 text-sm text-slate-200">همه‌چیز آرام است</strong><span className="mt-1 text-[10px] text-slate-600">هشدار فعالی برای این سرور وجود ندارد.</span></div>; }
-function ChartWarmup() { return <div className="grid h-[270px] place-content-center text-center text-xs text-slate-600"><Activity className="mx-auto mb-3 h-8 w-8 animate-pulse text-cyan-400/50" />در حال جمع‌آوری تاریخچه واقعی متریک‌ها…</div>; }
+function ChartWarmup() { return <div className="grid h-[270px] place-content-center text-center text-xs text-slate-600"><Activity className="mx-auto mb-3 h-8 w-8 animate-pulse text-violet-400/50" />در حال جمع‌آوری تاریخچه واقعی متریک‌ها…</div>; }
 function DashboardSkeleton() { return <div className="space-y-4"><div className="h-40 animate-pulse rounded-3xl bg-white/[.03]" /><div className="grid grid-cols-2 gap-3 xl:grid-cols-4">{[1,2,3,4].map(i => <div key={i} className="h-32 animate-pulse rounded-3xl bg-white/[.03]" />)}</div><div className="h-80 animate-pulse rounded-3xl bg-white/[.03]" /></div>; }
 function EmptyState() { return <div className="grid min-h-[60vh] place-content-center text-center text-slate-500"><ServerCog className="mx-auto mb-4 h-12 w-12" /><p>دریافت نمای عملیاتی ممکن نشد.</p></div>; }
 function healthLabel(state: string) { return state === "healthy" ? "پایدار" : state === "degraded" ? "نیازمند توجه" : state === "offline" ? "قطع ارتباط" : "بحرانی"; }

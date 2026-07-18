@@ -5,6 +5,11 @@ const { getMonitoredServices } = require('../utils/monitoringCollectors');
 const { getCachedOrFresh, clearCache } = require('../utils/monitorCache');
 const { getServers, getRawServers, saveServers } = require('../utils/servers');
 const { asyncRoute, sendError } = require('../utils/errors');
+const { isSqlEnabled } = require('../utils/features');
+
+function psString(value) {
+  return `'${String(value ?? '').replace(/'/g, "''")}'`;
+}
 
 function findServer(id, includeResolved = true) {
   const servers = includeResolved ? getServers() : getRawServers();
@@ -103,61 +108,85 @@ router.post('/:serverId/action', asyncRoute(async (req, res) => {
   const found = findServer(req.params.serverId);
   if (!found) return res.status(404).json({ error: 'Server not found' });
   const { server } = found;
-  const { service, action, force = false } = req.body;
-  if (!service || !['Start', 'Stop', 'Restart'].includes(action))
-    return res.status(400).json({ error: 'Invalid action' });
+  const service = String(req.body?.service || '').trim();
+  const actionMap = { start: 'Start', stop: 'Stop', restart: 'Restart', enable: 'Enable', disable: 'Disable' };
+  const action = actionMap[String(req.body?.action || '').trim().toLowerCase()];
+  const force = req.body?.force === true;
+  if (!service || !action) {
+    return res.status(400).json({
+      error: 'Invalid service action',
+      code: 'VALIDATION_ERROR',
+      hint: 'نام سرویس و یکی از عملیات Start، Stop، Restart، Enable یا Disable الزامی است.'
+    });
+  }
+
+  const safeService = psString(service);
 
   let script = '';
   if (action === 'Stop') {
     if (force) {
       script = `
-        $svc = Get-Service -Name "${service}" -ErrorAction Stop
+        $svc = Get-Service -Name ${safeService} -ErrorAction Stop
         Stop-Service -InputObject $svc -Force -ErrorAction Stop
-        Start-Sleep -Seconds 3
-        $svc = Get-Service -Name "${service}"
-        [PSCustomObject]@{ Name = $svc.Name; Status = $svc.Status.ToString() } | ConvertTo-Json
+        $svc.WaitForStatus('Stopped', [TimeSpan]::FromSeconds(12))
       `;
     } else {
       script = `
-        $result = sc.exe stop "${service}" 2>&1
-        if ($LASTEXITCODE -ne 0) { throw "sc.exe stop failed: $result" }
-        Start-Sleep -Seconds 2
-        $svc = Get-Service -Name "${service}"
-        [PSCustomObject]@{ Name = $svc.Name; Status = $svc.Status.ToString() } | ConvertTo-Json
+        $svc = Get-Service -Name ${safeService} -ErrorAction Stop
+        Stop-Service -InputObject $svc -ErrorAction Stop
+        $svc.WaitForStatus('Stopped', [TimeSpan]::FromSeconds(12))
       `;
     }
   } else if (action === 'Start') {
     script = `
-      $result = sc.exe start "${service}" 2>&1
-      if ($LASTEXITCODE -ne 0) { throw "sc.exe start failed: $result" }
-      Start-Sleep -Seconds 2
-      $svc = Get-Service -Name "${service}"
-      [PSCustomObject]@{ Name = $svc.Name; Status = $svc.Status.ToString() } | ConvertTo-Json
+      $svc = Get-Service -Name ${safeService} -ErrorAction Stop
+      if ($svc.StartType -eq 'Disabled') { throw 'Service is disabled; enable it before starting.' }
+      Start-Service -InputObject $svc -ErrorAction Stop
+      $svc.WaitForStatus('Running', [TimeSpan]::FromSeconds(12))
     `;
   } else if (action === 'Restart') {
     if (force) {
       script = `
-        $svc = Get-Service -Name "${service}" -ErrorAction Stop
+        $svc = Get-Service -Name ${safeService} -ErrorAction Stop
+        if ($svc.StartType -eq 'Disabled') { throw 'Service is disabled; enable it before restarting.' }
         Stop-Service -InputObject $svc -Force -ErrorAction Stop
-        Start-Sleep -Seconds 3
+        $svc.WaitForStatus('Stopped', [TimeSpan]::FromSeconds(12))
         Start-Service -InputObject $svc -ErrorAction Stop
-        Start-Sleep -Seconds 2
-        $svc = Get-Service -Name "${service}"
-        [PSCustomObject]@{ Name = $svc.Name; Status = $svc.Status.ToString() } | ConvertTo-Json
+        $svc.WaitForStatus('Running', [TimeSpan]::FromSeconds(12))
       `;
     } else {
       script = `
-        $stopResult = sc.exe stop "${service}" 2>&1
-        if ($LASTEXITCODE -ne 0 -and $stopResult -notmatch "not started") { throw "sc.exe stop failed: $stopResult" }
-        Start-Sleep -Seconds 3
-        $startResult = sc.exe start "${service}" 2>&1
-        if ($LASTEXITCODE -ne 0) { throw "sc.exe start failed: $startResult" }
-        Start-Sleep -Seconds 2
-        $svc = Get-Service -Name "${service}"
-        [PSCustomObject]@{ Name = $svc.Name; Status = $svc.Status.ToString() } | ConvertTo-Json
+        $svc = Get-Service -Name ${safeService} -ErrorAction Stop
+        if ($svc.StartType -eq 'Disabled') { throw 'Service is disabled; enable it before restarting.' }
+        if ($svc.Status -ne 'Stopped') {
+          Stop-Service -InputObject $svc -ErrorAction Stop
+          $svc.WaitForStatus('Stopped', [TimeSpan]::FromSeconds(12))
+        }
+        Start-Service -InputObject $svc -ErrorAction Stop
+        $svc.WaitForStatus('Running', [TimeSpan]::FromSeconds(12))
       `;
     }
+  } else if (action === 'Enable') {
+    script = `Set-Service -Name ${safeService} -StartupType Automatic -ErrorAction Stop`;
+  } else if (action === 'Disable') {
+    script = `
+      $svc = Get-Service -Name ${safeService} -ErrorAction Stop
+      if ($svc.Status -ne 'Stopped') { throw 'Stop the service before disabling it.' }
+      Set-Service -Name ${safeService} -StartupType Disabled -ErrorAction Stop
+    `;
   }
+
+  script += `
+    $svc = Get-Service -Name ${safeService} -ErrorAction Stop
+    [PSCustomObject]@{
+      Name = $svc.Name
+      DisplayName = $svc.DisplayName
+      Status = $svc.Status.ToString()
+      StartType = $svc.StartType.ToString()
+      CanStop = $svc.CanStop
+      CanPauseAndContinue = $svc.CanPauseAndContinue
+    } | ConvertTo-Json -Compress
+  `;
 
   const result = await executeOnServer(server, script);
   // Clean CLIXML errors

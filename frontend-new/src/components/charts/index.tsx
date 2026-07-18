@@ -42,8 +42,8 @@ export function UsageAreaChart({ data, height = 200 }: UsageAreaChartProps) {
       <AreaChart data={data} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
         <defs>
           <linearGradient id="cpuGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
-            <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+            <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.36} />
+            <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
           </linearGradient>
           <linearGradient id="ramGrad" x1="0" y1="0" x2="0" y2="1">
             <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
@@ -54,7 +54,7 @@ export function UsageAreaChart({ data, height = 200 }: UsageAreaChartProps) {
         <XAxis dataKey="time" tick={{ fontSize: 11, fill: "rgb(var(--color-text-muted))" }} axisLine={false} tickLine={false} />
         <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: "rgb(var(--color-text-muted))" }} axisLine={false} tickLine={false} width={35} />
         <Tooltip content={<ChartTooltip formatter={(v) => `${v}%`} />} />
-        <Area type="monotone" dataKey="cpu" name="CPU" stroke="#3b82f6" fill="url(#cpuGrad)" strokeWidth={2} />
+        <Area type="monotone" dataKey="cpu" name="CPU" stroke="#8b5cf6" fill="url(#cpuGrad)" strokeWidth={2} />
         <Area type="monotone" dataKey="ram" name="RAM" stroke="#10b981" fill="url(#ramGrad)" strokeWidth={2} />
       </AreaChart>
     </ResponsiveContainer>
@@ -63,7 +63,7 @@ export function UsageAreaChart({ data, height = 200 }: UsageAreaChartProps) {
 
 // ===== Disk Usage Bar Chart =====
 interface DiskBarChartProps {
-  data: { name: string; used: number; free: number; total: number }[];
+  data: { name: string; usedGB: number; freeGB: number; totalGB: number; usedPercent: number }[];
   height?: number;
 }
 
@@ -72,10 +72,13 @@ export function DiskBarChart({ data, height = 250 }: DiskBarChartProps) {
     <ResponsiveContainer width="100%" height={height}>
       <BarChart data={data} layout="vertical" margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
         <CartesianGrid strokeDasharray="3 3" stroke="rgb(var(--color-border) / 0.5)" horizontal={false} />
-        <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 11, fill: "rgb(var(--color-text-muted))" }} tickFormatter={(v) => `${v}%`} axisLine={false} tickLine={false} />
+        <XAxis type="number" tick={{ fontSize: 11, fill: "rgb(var(--color-text-muted))" }} tickFormatter={(v) => `${v} GB`} axisLine={false} tickLine={false} />
         <YAxis type="category" dataKey="name" tick={{ fontSize: 12, fill: "rgb(var(--color-text-muted))" }} axisLine={false} tickLine={false} width={50} />
-        <Tooltip content={<ChartTooltip formatter={(v) => `${v}%`} />} />
-        <Bar dataKey="used" name="مصرف" fill={data.some(d => d.used >= 90) ? "#ef4444" : data.some(d => d.used >= 80) ? "#f59e0b" : "#10b981"} radius={[0, 6, 6, 0]} barSize={20} />
+        <Tooltip content={<ChartTooltip formatter={(v) => `${Number(v).toLocaleString("fa-IR", { maximumFractionDigits: 2 })} GB`} />} />
+        <Bar dataKey="usedGB" name="مصرف‌شده" stackId="capacity" radius={[0, 0, 0, 0]} barSize={20}>
+          {data.map((entry, i) => <Cell key={i} fill={entry.usedPercent >= 90 ? "#fb7185" : entry.usedPercent >= 80 ? "#fbbf24" : "#8b5cf6"} />)}
+        </Bar>
+        <Bar dataKey="freeGB" name="آزاد" stackId="capacity" fill="#182033" radius={[0, 6, 6, 0]} barSize={20} />
       </BarChart>
     </ResponsiveContainer>
   );
@@ -88,7 +91,7 @@ interface SparklineProps {
   height?: number;
 }
 
-export function Sparkline({ data, color = "#3b82f6", height = 50 }: SparklineProps) {
+export function Sparkline({ data, color = "#8b5cf6", height = 50 }: SparklineProps) {
   return (
     <ResponsiveContainer width="100%" height={height}>
       <AreaChart data={data} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
@@ -135,7 +138,7 @@ export function SimpleBarChart({ data, height = 180 }: SimpleBarChartProps) {
         <Tooltip content={<ChartTooltip />} />
         <Bar dataKey="value" name="تعداد" radius={[6, 6, 0, 0]} barSize={32}>
           {data.map((entry, i) => (
-            <Cell key={i} fill={entry.fill || "#3b82f6"} />
+            <Cell key={i} fill={entry.fill || "#8b5cf6"} />
           ))}
         </Bar>
       </BarChart>

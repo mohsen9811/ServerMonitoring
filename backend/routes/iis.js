@@ -64,12 +64,30 @@ async function readIis(server) {
   return result ? JSON.parse(result) : { sites: [], appPools: [], iisInstalled: false };
 }
 
+function normalizeIisState(data = {}) {
+  const sites = (Array.isArray(data.sites) ? data.sites : data.sites ? [data.sites] : []).map(item => ({
+    name: item.name || item.Name || '',
+    id: item.id ?? item.Id ?? null,
+    state: item.state || item.State || 'Unknown',
+    physicalPath: item.physicalPath || item.PhysicalPath || '',
+    bindings: item.bindings || item.Bindings || ''
+  }));
+  const sourcePools = data.pools || data.appPools || [];
+  const pools = (Array.isArray(sourcePools) ? sourcePools : sourcePools ? [sourcePools] : []).map(item => ({
+    name: item.name || item.Name || '',
+    state: item.state || item.State || 'Unknown',
+    managedRuntimeVersion: item.managedRuntimeVersion || item.ManagedRuntimeVersion || '',
+    managedPipelineMode: item.managedPipelineMode || item.ManagedPipelineMode || ''
+  }));
+  return { sites, pools, iisInstalled: Boolean(data.iisInstalled), source: data.source || '', error: data.error || '' };
+}
+
 router.get('/:serverId', asyncRoute(async (req, res) => {
   const server = requireServer(req, res);
   if (!server) return;
   if (!isIisEnabled(server)) return res.json(iisDisabledResponse(server));
   const item = await getCachedOrFresh(`iis:${server.id}`, IIS_TTL_MS, () => readIis(server), { force: req.query.force === '1' });
-  res.json({ ...item.data, updatedAt: item.updatedAt, stale: item.stale, fromCache: item.fromCache });
+  res.json({ ...normalizeIisState(item.data), updatedAt: item.updatedAt, stale: item.stale, fromCache: item.fromCache });
 }, 'get iis state'));
 
 router.post('/:serverId/action', asyncRoute(async (req, res) => {
@@ -78,7 +96,8 @@ router.post('/:serverId/action', asyncRoute(async (req, res) => {
   if (!isIisEnabled(server)) return res.status(400).json({ error: 'IIS برای این سرور فعال نیست', code: 'IIS_DISABLED', hint: 'در تنظیمات سرور، گزینه IIS را فقط برای Web Server فعال کنید.' });
 
   const { type, name, action } = req.body || {};
-  const normalizedType = String(type || '').toLowerCase();
+  const rawType = String(type || '').toLowerCase();
+  const normalizedType = rawType === 'pool' ? 'apppool' : rawType;
   const normalizedAction = String(action || '').toLowerCase();
   const safeName = String(name || '').replace(/'/g, "''");
 

@@ -77,6 +77,12 @@ app.post('/api/servers', (req, res) => {
   if (!/^[a-zA-Z0-9\-_]+$/.test(newServer.id)) {
     return res.status(400).json({ error: 'Invalid server id', code: 'VALIDATION_ERROR', hint: 'شناسه فقط حروف انگلیسی، عدد، خط تیره و زیرخط قبول می‌کند.' });
   }
+  if (String(newServer.id).length > 80 || String(newServer.name).length > 160 || String(newServer.host).length > 255) {
+    return res.status(400).json({ error: 'Server fields are too long', code: 'VALIDATION_ERROR', hint: 'طول شناسه، نام یا Host از حد مجاز بیشتر است.' });
+  }
+  if (newServer.features?.sql === true && !String(newServer.sql?.server || newServer.host || '').trim()) {
+    return res.status(400).json({ error: 'SQL host is required', code: 'VALIDATION_ERROR', hint: 'برای پایش SQL، آدرس SQL Host را کامل کنید.' });
+  }
 
   const servers = getServers();
   if (servers.find(s => s.id === newServer.id)) {
@@ -86,7 +92,7 @@ app.post('/api/servers', (req, res) => {
   const storedServer = normalizeServerForStorage(newServer);
   servers.push(storedServer);
   saveServers(servers);
-  res.json({ success: true, server: publicServerSummary(storedServer) });
+  res.status(201).json({ success: true, server: publicServerSummary(storedServer) });
 });
 
 app.put('/api/servers/:id', (req, res) => {

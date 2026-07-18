@@ -31,7 +31,15 @@ function readJsonFile(filePath, defaultValue) {
 
 function writeJsonFile(filePath, value) {
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
-  fs.writeFileSync(filePath, JSON.stringify(value, null, 2), 'utf8');
+  const payload = JSON.stringify(value, null, 2);
+  JSON.parse(payload);
+  const tempPath = `${filePath}.${process.pid}.${Date.now()}.tmp`;
+  fs.writeFileSync(tempPath, payload, 'utf8');
+  try {
+    fs.copyFileSync(tempPath, filePath);
+  } finally {
+    try { fs.unlinkSync(tempPath); } catch {}
+  }
 }
 
 module.exports = { projectRoot, resolveProjectPath, ensureJsonFile, readJsonFile, writeJsonFile };

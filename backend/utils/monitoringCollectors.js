@@ -49,6 +49,9 @@ async function getMonitoredServices(server) {
           DisplayName = $svc.DisplayName
           Status = $svc.Status.ToString()
           StartType = $svc.StartType.ToString()
+          CanStop = [bool]$svc.CanStop
+          CanPauseAndContinue = [bool]$svc.CanPauseAndContinue
+          ServiceType = $svc.ServiceType.ToString()
         }
       } else {
         $out += [PSCustomObject]@{
@@ -56,6 +59,9 @@ async function getMonitoredServices(server) {
           DisplayName = 'Service not found'
           Status = 'NotFound'
           StartType = 'Unknown'
+          CanStop = $false
+          CanPauseAndContinue = $false
+          ServiceType = 'Unknown'
         }
       }
     }
@@ -72,16 +78,21 @@ async function getDisks(server) {
     try {
       $driveTypeMap = @{ 2='Removable'; 3='Local Disk'; 4='Network'; 5='CD-ROM'; 6='RAM Disk' }
       $items = @(Get-CimInstance Win32_LogicalDisk -ErrorAction Stop | Where-Object { $_.Size -gt 0 } | Sort-Object DeviceID | ForEach-Object {
-        $used = $_.Size - $_.FreeSpace
-        $usedPercent = if ($_.Size -gt 0) { [math]::Round(($used / $_.Size) * 100, 1) } else { 0 }
+        $totalBytes = [double]$_.Size
+        $freeBytes = [double]$_.FreeSpace
+        $usedBytes = [math]::Max(0, $totalBytes - $freeBytes)
+        $usedPercent = if ($totalBytes -gt 0) { [math]::Round(($usedBytes / $totalBytes) * 100, 1) } else { 0 }
         [PSCustomObject]@{
           Drive = $_.DeviceID
           VolumeName = if ($_.VolumeName) { $_.VolumeName } else { '-' }
           FileSystem = if ($_.FileSystem) { $_.FileSystem } else { '-' }
           DriveType = if ($driveTypeMap.ContainsKey([int]$_.DriveType)) { $driveTypeMap[[int]$_.DriveType] } else { [string]$_.DriveType }
-          TotalGB = [math]::Round($_.Size / 1GB, 2)
-          UsedGB = [math]::Round($used / 1GB, 2)
-          FreeGB = [math]::Round($_.FreeSpace / 1GB, 2)
+          TotalGB = [math]::Round($totalBytes / 1GB, 2)
+          UsedGB = [math]::Round($usedBytes / 1GB, 2)
+          FreeGB = [math]::Round($freeBytes / 1GB, 2)
+          TotalBytes = [int64]$totalBytes
+          UsedBytes = [int64]$usedBytes
+          FreeBytes = [int64]$freeBytes
           UsedPercent = $usedPercent
           FreePercent = [math]::Round(100 - $usedPercent, 1)
           ProviderName = if ($_.ProviderName) { $_.ProviderName } else { '' }
@@ -470,6 +481,8 @@ function normalizeSqlJobAction(action) {
     runjob: 'Start',
     stop: 'Stop',
     stopjob: 'Stop',
+    restart: 'Restart',
+    restartjob: 'Restart',
     enable: 'Enable',
     enabled: 'Enable',
     disable: 'Disable',
@@ -483,7 +496,7 @@ async function runSqlJobAction(server, jobName, action) {
   if (!jobName || !normalizedAction) {
     const err = new Error('Invalid job or action');
     err.code = 'VALIDATION_ERROR';
-    err.hint = 'jobName و action الزامی هستند. action باید Start، Stop، Enable یا Disable باشد.';
+    err.hint = 'jobName و action الزامی هستند. action باید Start، Stop، Restart، Enable یا Disable باشد.';
     throw err;
   }
 
@@ -542,9 +555,37 @@ async function runSqlJobAction(server, jobName, action) {
       return { success: true, jobName, action: normalizedAction, message: 'دستور Stop برای Job ارسال شد.' };
     }
 
+    if (normalizedAction === 'Restart') {
+      if (!before.enabled) {
+        const err = new Error('Job is disabled');
+        err.code = 'JOB_DISABLED';
+        err.hint = 'قبل از Restart باید Job را Enable کنی.';
+        throw err;
+      }
+      if (before.is_running) {
+        await pool.request().input('jobName', sql.NVarChar, jobName)
+          .query('EXEC msdb.dbo.sp_stop_job @job_name = @jobName;');
+        let stopped = false;
+        for (let attempt = 0; attempt < 20; attempt += 1) {
+          await new Promise(resolve => setTimeout(resolve, 500));
+          const state = await getJobRuntimeState(pool, jobName);
+          if (!state?.is_running) { stopped = true; break; }
+        }
+        if (!stopped) {
+          const err = new Error('Job did not stop before restart timeout');
+          err.code = 'JOB_STOP_TIMEOUT';
+          err.hint = 'Job هنوز در حال توقف است؛ چند لحظه بعد دوباره وضعیت را بررسی کنید.';
+          throw err;
+        }
+      }
+      await pool.request().input('jobName', sql.NVarChar, jobName)
+        .query('EXEC msdb.dbo.sp_start_job @job_name = @jobName;');
+      return { success: true, jobName, action: normalizedAction, message: 'Job دوباره برای اجرا ارسال شد.' };
+    }
+
     const err = new Error('Invalid job action');
     err.code = 'VALIDATION_ERROR';
-    err.hint = 'action باید Start، Stop، Enable یا Disable باشد.';
+    err.hint = 'action باید Start، Stop، Restart، Enable یا Disable باشد.';
     throw err;
   });
 }

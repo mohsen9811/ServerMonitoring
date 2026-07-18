@@ -42,6 +42,8 @@ function normalizeJobAction(value) {
     runjob: 'Start',
     stop: 'Stop',
     stopjob: 'Stop',
+    restart: 'Restart',
+    restartjob: 'Restart',
     enable: 'Enable',
     enabled: 'Enable',
     active: 'Enable',
@@ -71,7 +73,7 @@ function validateJobAction(req, res) {
     res.status(400).json({
       error: 'Invalid job or action',
       code: 'VALIDATION_ERROR',
-      hint: 'jobName و action الزامی هستند. action باید یکی از Start، Stop، Enable یا Disable باشد.',
+      hint: 'jobName و action الزامی هستند. action باید یکی از Start، Stop، Restart، Enable یا Disable باشد.',
       received: {
         jobName: jobName || null,
         action: req.params.action || req.query.action || req.body?.action || null
